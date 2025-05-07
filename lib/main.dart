@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'features/auth/presentation/pages/login_page.dart';
+import 'features/animals/presentation/pages/animals_page.dart';
+import 'features/users/presentation/pages/users_page.dart';
 import 'core/theme/app_colors.dart';
 
 void main() {
@@ -18,7 +20,10 @@ class PetConnectApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white,
         fontFamily: 'Roboto',
       ),
-      home: const LoginPage(),
+      // Altere para a página que deseja visualizar
+      // home: const LoginPage(),
+      // home: const AnimalsPage(),
+      home: const UsersPage(),
       debugShowCheckedModeBanner: false,
     );
   }
