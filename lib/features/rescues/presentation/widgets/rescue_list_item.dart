@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
-import '../../domain/models/complaint_model.dart';
+import '../../domain/models/rescue_model.dart';
 
-class ComplaintListItem extends StatelessWidget {
-  final ComplaintModel complaint;
+class RescueListItem extends StatelessWidget {
+  final RescueModel rescue;
   final VoidCallback onDetails;
-  final VoidCallback onAttend;
+  final VoidCallback onUpdateStatus;
   final VoidCallback onEdit;
-  final VoidCallback onDelete;
 
-  const ComplaintListItem({
-    super.key,
-    required this.complaint,
+  const RescueListItem({
+    Key? key,
+    required this.rescue,
     required this.onDetails,
-    required this.onAttend,
-    required this.onDelete,
+    required this.onUpdateStatus,
     required this.onEdit,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,41 +27,35 @@ class ComplaintListItem extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Cabeçalho com enviado por e status
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Ícone de localização
-              const Icon(
-                Icons.location_on_outlined,
-                color: Color(0xFF6B7280),
-                size: 16,
-              ),
-              const SizedBox(width: 8),
-              // Endereço
-              Expanded(
-                child: Text(
-                  complaint.endereco,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF333333),
-                  ),
+              // Enviado por
+              Text(
+                'Enviado - ${rescue.data} às ${rescue.hora}',
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF333333),
                 ),
               ),
+              const Spacer(),
               // Status
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: complaint.status == 'Pendente' 
+                  color: rescue.status == 'Pendente' 
                       ? const Color(0xFFFEF3C7) 
                       : const Color(0xFFD1FAE5),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
-                  complaint.status,
+                  rescue.status,
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
-                    color: complaint.status == 'Pendente' 
+                    color: rescue.status == 'Pendente' 
                         ? const Color(0xFFD97706) 
                         : const Color(0xFF059669),
                   ),
@@ -71,20 +63,68 @@ class ComplaintListItem extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
+          // Endereço
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Ícone de calendário
               const Icon(
-                Icons.calendar_today_outlined,
+                Icons.location_on_outlined,
                 color: Color(0xFF6B7280),
                 size: 16,
               ),
               const SizedBox(width: 8),
-              // Data do reporte
+              Expanded(
+                child: Text(
+                  rescue.endereco,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Color(0xFF333333),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          // Localização
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(width: 24),
               Text(
-                'Reportado em ${complaint.dataReporte}',
+                rescue.endereco,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Color(0xFF6B7280),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          // Telefone
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(
+                Icons.phone_outlined,
+                color: Color(0xFF6B7280),
+                size: 16,
+              ),              
+            ],
+          ),
+          const SizedBox(height: 8),
+          // Espécie de animal
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(
+                Icons.pets_outlined,
+                color: Color(0xFF6B7280),
+                size: 16,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Espécie de animal: ${rescue.especie}',
                 style: const TextStyle(
                   fontSize: 14,
                   color: Color(0xFF6B7280),
@@ -95,7 +135,7 @@ class ComplaintListItem extends StatelessWidget {
           const SizedBox(height: 12),
           // Descrição
           Text(
-            complaint.descricao,
+            rescue.descricao,
             style: const TextStyle(
               fontSize: 14,
               color: Color(0xFF333333),
@@ -116,11 +156,24 @@ class ComplaintListItem extends StatelessWidget {
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
-                child: const Text('Detalhes'),
+                child: const Text('Visualizar detalhes'),
+              ),
+              const SizedBox(width: 8),
+              OutlinedButton(
+                onPressed: onEdit,
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: const Color(0xFF059669),
+                  side: const BorderSide(color: Color(0xFF059669)),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+                child: const Text('Editar'),
               ),
               const SizedBox(width: 8),
               ElevatedButton(
-                onPressed: onAttend,
+                onPressed: onUpdateStatus,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF00A3D7),
                   foregroundColor: Colors.white,
@@ -129,7 +182,7 @@ class ComplaintListItem extends StatelessWidget {
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
-                child: const Text('Atender'),
+                child: const Text('Atualizar status'),
               ),
             ],
           ),

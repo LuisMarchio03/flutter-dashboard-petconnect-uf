@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/core/routes/app_routes.dart';
+import 'package:myapp/features/animals/presentation/pages/animal_form_page.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../domain/models/animal_model.dart';
 import '../widgets/animal_list_item.dart';
@@ -14,11 +16,36 @@ class AnimalsPage extends StatefulWidget {
 class _AnimalsPageState extends State<AnimalsPage> {
   // Lista de exemplo para demonstração
   final List<AnimalModel> animais = [
-    AnimalModel(nome: 'Nome', genero: 'Gênero', raca: 'Raça', status: 'Status'),
-    AnimalModel(nome: 'Nome', genero: 'Gênero', raca: 'Raça', status: 'Status'),
-    AnimalModel(nome: 'Nome', genero: 'Gênero', raca: 'Raça', status: 'Status'),
-    AnimalModel(nome: 'Nome', genero: 'Gênero', raca: 'Raça', status: 'Status'),
+    AnimalModel(
+      nome: 'Rex', 
+      genero: 'Macho', 
+      raca: 'Labrador', 
+      cor: 'Preto',
+      status: 'Disponível'
+    ),
+    AnimalModel(
+      nome: 'Luna', 
+      genero: 'Fêmea', 
+      raca: 'Poodle', 
+      cor: 'Branco',
+      status: 'Adotado'
+    ),
+    AnimalModel(
+      nome: 'Thor', 
+      genero: 'Macho', 
+      raca: 'Pastor Alemão', 
+      cor: 'Marrom',
+      status: 'Em tratamento'
+    ),
+    AnimalModel(
+      nome: 'Mel', 
+      genero: 'Fêmea', 
+      raca: 'Vira-lata', 
+      cor: 'Caramelo',
+      status: 'Disponível'
+    ),
   ];
+  final List<AnimalModel> _animais = [];
 
   @override
   Widget build(BuildContext context) {
@@ -155,19 +182,20 @@ class _AnimalsPageState extends State<AnimalsPage> {
                         child: SearchBarWidget(),
                       ),
                       const SizedBox(width: 16),
+                      // Atualizar o botão de adicionar animal
                       ElevatedButton.icon(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
+                        onPressed: _adicionarNovoAnimal,
                         icon: const Icon(Icons.add, color: Colors.white),
                         label: const Text(
                           'Adicionar Animal',
                           style: TextStyle(color: Colors.white),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF00A3D7),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                         ),
                       ),
                     ],
@@ -214,11 +242,20 @@ class _AnimalsPageState extends State<AnimalsPage> {
                             ),
                           ),
                           // Lista de animais
+                          // Na parte do ListView.builder
                           Expanded(
                             child: ListView.builder(
                               itemCount: animais.length,
                               itemBuilder: (context, index) {
-                                return AnimalListItem(animal: animais[index]);
+                                return AnimalListItem(
+                                  animal: animais[index],
+                                  onEdit: (animal) => _editarAnimal(animal, index),
+                                  onDelete: () {
+                                    setState(() {
+                                      animais.removeAt(index);
+                                    });
+                                  },
+                                );
                               },
                             ),
                           ),
@@ -262,5 +299,38 @@ class _AnimalsPageState extends State<AnimalsPage> {
         color: AppColors.textPrimary,
       ),
     );
+  }
+
+  // Método para adicionar um novo animal
+  void _adicionarNovoAnimal() async {
+    final result = await AppRoutes.navigateTo<AnimalModel>(
+      context, 
+      AppRoutes.animalForm
+    );
+    
+    if (result != null) {
+      setState(() {
+        _animais.add(result);
+      });
+    }
+  }
+
+  // Método para editar um animal existente
+  void _editarAnimal(AnimalModel animal, int index) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AnimalFormPage(
+          animal: animal,
+          isEditing: true,
+        ),
+      ),
+    );
+
+    if (result != null && result is AnimalModel) {
+      setState(() {
+        animais[index] = result;
+      });
+    }
   }
 }

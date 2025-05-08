@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/core/routes/app_routes.dart';
+import 'package:myapp/features/users/domain/models/user_form_model.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../domain/models/user_model.dart';
 import '../widgets/user_list_item.dart';
@@ -20,6 +22,7 @@ class _UsersPageState extends State<UsersPage> {
     UserModel(nome: 'Mariana Costa', email: 'mariana.costa@email.com', perfil: 'Voluntário'),
     UserModel(nome: 'Lucas Ferreira', email: 'lucas.ferreira@email.com', perfil: 'Administrador'),
   ];
+  final List<UserModel> _usuarios = [];
 
   final TextEditingController _searchController = TextEditingController();
 
@@ -38,6 +41,36 @@ class _UsersPageState extends State<UsersPage> {
         color: Color(0xFF6B7280),
       ),
     );
+  }
+
+  void _adicionarNovoUsuario() async {
+    final result = await AppRoutes.navigateTo<UserFormModel>(
+      context, 
+      AppRoutes.userForm
+    );
+    
+    if (result != null) {
+      setState(() {
+        _usuarios.add(result as UserModel);
+      });
+    }
+  }
+
+  void _editarUsuario(UserFormModel usuario) async {
+    final result = await AppRoutes.navigateTo<UserFormModel>(
+      context, 
+      AppRoutes.userForm,
+      arguments: usuario
+    );
+    
+    if (result != null) {
+      setState(() {
+        final index = _usuarios.indexWhere((u) => u.email == usuario.email);
+        if (index != -1) {
+          _usuarios[index] = result as UserModel;
+        }
+      });
+    }
   }
 
   @override

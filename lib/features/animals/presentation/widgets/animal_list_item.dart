@@ -3,10 +3,14 @@ import '../../domain/models/animal_model.dart';
 
 class AnimalListItem extends StatelessWidget {
   final AnimalModel animal;
+  final Function(AnimalModel) onEdit;
+  final Function() onDelete;
 
   const AnimalListItem({
     super.key,
     required this.animal,
+    required this.onEdit,
+    required this.onDelete,
   });
 
   @override
@@ -42,12 +46,12 @@ class AnimalListItem extends StatelessWidget {
               children: [
                 IconButton(
                   icon: const Icon(Icons.edit, size: 20),
-                  onPressed: () {},
+                  onPressed: () => onEdit(animal),
                   color: Colors.blue,
                 ),
                 IconButton(
                   icon: const Icon(Icons.delete, size: 20),
-                  onPressed: () {},
+                  onPressed: onDelete,
                   color: Colors.red,
                 ),
               ],
