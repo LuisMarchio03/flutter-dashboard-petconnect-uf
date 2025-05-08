@@ -7,11 +7,7 @@ class AnimalFormPage extends StatefulWidget {
   final AnimalModel? animal;
   final bool isEditing;
 
-  const AnimalFormPage({
-    super.key,
-    this.animal,
-    this.isEditing = false,
-  });
+  const AnimalFormPage({super.key, this.animal, this.isEditing = false});
 
   @override
   State<AnimalFormPage> createState() => _AnimalFormPageState();
@@ -19,7 +15,7 @@ class AnimalFormPage extends StatefulWidget {
 
 class _AnimalFormPageState extends State<AnimalFormPage> {
   final _formKey = GlobalKey<FormState>();
-  
+
   // Controladores para os campos do formulário
   final _nomeController = TextEditingController();
   final _racaController = TextEditingController();
@@ -31,17 +27,17 @@ class _AnimalFormPageState extends State<AnimalFormPage> {
   final _idadeController = TextEditingController();
   final _localizacaoController = TextEditingController();
   final _condicoesMedicasController = TextEditingController();
-  
+
   String _genero = 'Macho';
   String _status = 'Disponível';
-  
+
   DateTime? _ultimaVacina;
   DateTime? _proximaVacina;
 
   @override
   void initState() {
     super.initState();
-    
+
     // Preencher os campos se estiver editando
     if (widget.isEditing && widget.animal != null) {
       _nomeController.text = widget.animal!.nome;
@@ -54,10 +50,10 @@ class _AnimalFormPageState extends State<AnimalFormPage> {
       _idadeController.text = widget.animal!.idade;
       _localizacaoController.text = widget.animal!.localizacao;
       _condicoesMedicasController.text = widget.animal!.condicoesMedicas;
-      
+
       _genero = widget.animal!.genero;
       _status = widget.animal!.status;
-      
+
       // Converter strings de data para DateTime se necessário
       // Implementação simplificada
     }
@@ -97,7 +93,7 @@ class _AnimalFormPageState extends State<AnimalFormPage> {
         proximaVacina: _proximaVacina?.toString() ?? '',
         condicoesMedicas: _condicoesMedicasController.text,
       );
-      
+
       // Retornar o animal para a página anterior
       Navigator.pop(context, animal);
     }
@@ -126,7 +122,9 @@ class _AnimalFormPageState extends State<AnimalFormPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              widget.isEditing ? 'Editar Animal' : 'Adicionar Animal',
+                              widget.isEditing
+                                  ? 'Editar Animal'
+                                  : 'Adicionar Animal',
                               style: const TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
@@ -242,7 +240,7 @@ class _AnimalFormPageState extends State<AnimalFormPage> {
                             controller: _localizacaoController,
                           ),
                           const SizedBox(height: 32),
-                          
+
                           // Informações de Saúde
                           const Text(
                             'Informações de Saúde',
@@ -283,7 +281,9 @@ class _AnimalFormPageState extends State<AnimalFormPage> {
                                         ),
                                         decoration: BoxDecoration(
                                           color: Colors.grey[100],
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
                                         ),
                                         child: Row(
                                           children: [
@@ -316,7 +316,9 @@ class _AnimalFormPageState extends State<AnimalFormPage> {
                                       onTap: () async {
                                         final date = await showDatePicker(
                                           context: context,
-                                          initialDate: DateTime.now().add(const Duration(days: 30)),
+                                          initialDate: DateTime.now().add(
+                                            const Duration(days: 30),
+                                          ),
                                           firstDate: DateTime.now(),
                                           lastDate: DateTime(2100),
                                         );
@@ -333,7 +335,9 @@ class _AnimalFormPageState extends State<AnimalFormPage> {
                                         ),
                                         decoration: BoxDecoration(
                                           color: Colors.grey[100],
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
                                         ),
                                         child: Row(
                                           children: [
@@ -365,7 +369,7 @@ class _AnimalFormPageState extends State<AnimalFormPage> {
                             maxLines: 3,
                           ),
                           const SizedBox(height: 32),
-                          
+
                           // Botões de ação
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
@@ -376,9 +380,7 @@ class _AnimalFormPageState extends State<AnimalFormPage> {
                                 },
                                 child: const Text(
                                   'Cancelar',
-                                  style: TextStyle(
-                                    color: Colors.grey,
-                                  ),
+                                  style: TextStyle(color: Colors.grey),
                                 ),
                               ),
                               const SizedBox(width: 16),
@@ -426,10 +428,7 @@ class _AnimalFormPageState extends State<AnimalFormPage> {
       ),
       child: ListTile(
         leading: Icon(icon, color: Colors.white),
-        title: Text(
-          text,
-          style: const TextStyle(color: Colors.white),
-        ),
+        title: Text(text, style: const TextStyle(color: Colors.white)),
         onTap: () {},
         dense: true,
       ),

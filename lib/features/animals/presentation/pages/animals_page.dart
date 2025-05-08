@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/core/routes/app_routes.dart';
+import 'package:myapp/core/widgets/confirm_delete_dialog.dart';
 import 'package:myapp/core/widgets/sidebar_menu.dart';
 import 'package:myapp/features/animals/presentation/pages/animal_form_page.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -18,32 +19,32 @@ class _AnimalsPageState extends State<AnimalsPage> {
   // Lista de exemplo para demonstração
   final List<AnimalModel> animais = [
     AnimalModel(
-      nome: 'Rex', 
-      genero: 'Macho', 
-      raca: 'Labrador', 
+      nome: 'Rex',
+      genero: 'Macho',
+      raca: 'Labrador',
       cor: 'Preto',
-      status: 'Disponível'
+      status: 'Disponível',
     ),
     AnimalModel(
-      nome: 'Luna', 
-      genero: 'Fêmea', 
-      raca: 'Poodle', 
+      nome: 'Luna',
+      genero: 'Fêmea',
+      raca: 'Poodle',
       cor: 'Branco',
-      status: 'Adotado'
+      status: 'Adotado',
     ),
     AnimalModel(
-      nome: 'Thor', 
-      genero: 'Macho', 
-      raca: 'Pastor Alemão', 
+      nome: 'Thor',
+      genero: 'Macho',
+      raca: 'Pastor Alemão',
       cor: 'Marrom',
-      status: 'Em tratamento'
+      status: 'Em tratamento',
     ),
     AnimalModel(
-      nome: 'Mel', 
-      genero: 'Fêmea', 
-      raca: 'Vira-lata', 
+      nome: 'Mel',
+      genero: 'Fêmea',
+      raca: 'Vira-lata',
       cor: 'Caramelo',
-      status: 'Disponível'
+      status: 'Disponível',
     ),
   ];
   final List<AnimalModel> _animais = [];
@@ -123,9 +124,7 @@ class _AnimalsPageState extends State<AnimalsPage> {
                   // Barra de pesquisa e botão de adicionar
                   Row(
                     children: [
-                      const Expanded(
-                        child: SearchBarWidget(),
-                      ),
+                      const Expanded(child: SearchBarWidget()),
                       const SizedBox(width: 16),
                       // Atualizar o botão de adicionar animal
                       ElevatedButton.icon(
@@ -137,7 +136,10 @@ class _AnimalsPageState extends State<AnimalsPage> {
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF00A3D7),
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
@@ -194,10 +196,13 @@ class _AnimalsPageState extends State<AnimalsPage> {
                               itemBuilder: (context, index) {
                                 return AnimalListItem(
                                   animal: animais[index],
-                                  onEdit: (animal) => _editarAnimal(animal, index),
+                                  onEdit:
+                                      (animal) => _editarAnimal(animal, index),
                                   onDelete: () {
-                                    setState(() {
-                                      animais.removeAt(index);
+                                    _confirmarExclusao(context, () {
+                                      setState(() {
+                                        animais.removeAt(index);
+                                      });
                                     });
                                   },
                                 );
@@ -226,10 +231,7 @@ class _AnimalsPageState extends State<AnimalsPage> {
       ),
       child: ListTile(
         leading: Icon(icon, color: Colors.white),
-        title: Text(
-          text,
-          style: const TextStyle(color: Colors.white),
-        ),
+        title: Text(text, style: const TextStyle(color: Colors.white)),
         onTap: () {},
         dense: true,
       ),
@@ -249,10 +251,10 @@ class _AnimalsPageState extends State<AnimalsPage> {
   // Método para adicionar um novo animal
   void _adicionarNovoAnimal() async {
     final result = await AppRoutes.navigateTo<AnimalModel>(
-      context, 
-      AppRoutes.animalForm
+      context,
+      AppRoutes.animalForm,
     );
-    
+
     if (result != null) {
       setState(() {
         _animais.add(result);
@@ -265,10 +267,7 @@ class _AnimalsPageState extends State<AnimalsPage> {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => AnimalFormPage(
-          animal: animal,
-          isEditing: true,
-        ),
+        builder: (context) => AnimalFormPage(animal: animal, isEditing: true),
       ),
     );
 
@@ -278,4 +277,18 @@ class _AnimalsPageState extends State<AnimalsPage> {
       });
     }
   }
+}
+
+void _confirmarExclusao(BuildContext context, VoidCallback onConfirm) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return ConfirmDeleteDialog(
+        title: 'Confirmar Exclusão',
+        content:
+            'Tem certeza que deseja excluir este registro? Esta ação não pode ser desfeita.',
+        onConfirm: onConfirm,
+      );
+    },
+  );
 }

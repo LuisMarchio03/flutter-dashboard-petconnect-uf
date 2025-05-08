@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/core/routes/app_routes.dart';
+import 'package:myapp/core/widgets/confirm_delete_dialog.dart';
 import 'package:myapp/core/widgets/sidebar_menu.dart';
 import 'package:myapp/features/users/domain/models/user_form_model.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -17,11 +18,31 @@ class UsersPage extends StatefulWidget {
 class _UsersPageState extends State<UsersPage> {
   // Lista de exemplo para demonstração
   final List<UserModel> usuarios = [
-    UserModel(nome: 'Carlos Silva', email: 'carlos.silva@email.com', perfil: 'Administrador'),
-    UserModel(nome: 'Ana Oliveira', email: 'ana.oliveira@email.com', perfil: 'Veterinário'),
-    UserModel(nome: 'Pedro Santos', email: 'pedro.santos@email.com', perfil: 'Cuidador'),
-    UserModel(nome: 'Mariana Costa', email: 'mariana.costa@email.com', perfil: 'Voluntário'),
-    UserModel(nome: 'Lucas Ferreira', email: 'lucas.ferreira@email.com', perfil: 'Administrador'),
+    UserModel(
+      nome: 'Carlos Silva',
+      email: 'carlos.silva@email.com',
+      perfil: 'Administrador',
+    ),
+    UserModel(
+      nome: 'Ana Oliveira',
+      email: 'ana.oliveira@email.com',
+      perfil: 'Veterinário',
+    ),
+    UserModel(
+      nome: 'Pedro Santos',
+      email: 'pedro.santos@email.com',
+      perfil: 'Cuidador',
+    ),
+    UserModel(
+      nome: 'Mariana Costa',
+      email: 'mariana.costa@email.com',
+      perfil: 'Voluntário',
+    ),
+    UserModel(
+      nome: 'Lucas Ferreira',
+      email: 'lucas.ferreira@email.com',
+      perfil: 'Administrador',
+    ),
   ];
   final List<UserModel> _usuarios = [];
 
@@ -46,10 +67,10 @@ class _UsersPageState extends State<UsersPage> {
 
   void _adicionarNovoUsuario() async {
     final result = await AppRoutes.navigateTo<UserFormModel>(
-      context, 
-      AppRoutes.userForm
+      context,
+      AppRoutes.userForm,
     );
-    
+
     if (result != null) {
       setState(() {
         _usuarios.add(result as UserModel);
@@ -57,13 +78,13 @@ class _UsersPageState extends State<UsersPage> {
     }
   }
 
-  void _editarUsuario(UserFormModel usuario) async {
+  void _editarUsuario(UserModel usuario) async {
     final result = await AppRoutes.navigateTo<UserFormModel>(
-      context, 
+      context,
       AppRoutes.userForm,
-      arguments: usuario
+      arguments: usuario as UserFormModel,
     );
-    
+
     if (result != null) {
       setState(() {
         final index = _usuarios.indexWhere((u) => u.email == usuario.email);
@@ -165,6 +186,7 @@ class _UsersPageState extends State<UsersPage> {
                       ElevatedButton.icon(
                         onPressed: () {
                           // Implementar adição de usuário
+                          _adicionarNovoUsuario();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF00A3D7),
@@ -247,10 +269,14 @@ class _UsersPageState extends State<UsersPage> {
                                 return UserListItem(
                                   user: user,
                                   onEdit: () {
-                                    // Implementar edição
+                                    _editarUsuario(user);
                                   },
                                   onDelete: () {
-                                    // Implementar exclusão
+                                    _confirmarExclusao(context, () {
+                                      setState(() {
+                                        usuarios.removeAt(index);
+                                      });
+                                    });
                                   },
                                 );
                               },
@@ -273,9 +299,7 @@ class _UsersPageState extends State<UsersPage> {
                                   onPressed: () {},
                                   child: const Text(
                                     'Anterior',
-                                    style: TextStyle(
-                                      color: Color(0xFF6B7280),
-                                    ),
+                                    style: TextStyle(color: Color(0xFF6B7280)),
                                   ),
                                 ),
                                 Container(
@@ -304,9 +328,7 @@ class _UsersPageState extends State<UsersPage> {
                                   alignment: Alignment.center,
                                   child: const Text(
                                     '2',
-                                    style: TextStyle(
-                                      color: Color(0xFF6B7280),
-                                    ),
+                                    style: TextStyle(color: Color(0xFF6B7280)),
                                   ),
                                 ),
                                 Container(
@@ -319,18 +341,14 @@ class _UsersPageState extends State<UsersPage> {
                                   alignment: Alignment.center,
                                   child: const Text(
                                     '3',
-                                    style: TextStyle(
-                                      color: Color(0xFF6B7280),
-                                    ),
+                                    style: TextStyle(color: Color(0xFF6B7280)),
                                   ),
                                 ),
                                 TextButton(
                                   onPressed: () {},
                                   child: const Text(
                                     'Próximo',
-                                    style: TextStyle(
-                                      color: Color(0xFF6B7280),
-                                    ),
+                                    style: TextStyle(color: Color(0xFF6B7280)),
                                   ),
                                 ),
                               ],
@@ -357,16 +375,10 @@ class _UsersPageState extends State<UsersPage> {
         borderRadius: BorderRadius.circular(8),
       ),
       child: ListTile(
-        leading: Icon(
-          icon,
-          color: Colors.white,
-        ),
+        leading: Icon(icon, color: Colors.white),
         title: Text(
           title,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-          ),
+          style: const TextStyle(color: Colors.white, fontSize: 14),
         ),
         onTap: () {
           // Implementar navegação
@@ -376,4 +388,18 @@ class _UsersPageState extends State<UsersPage> {
       ),
     );
   }
+}
+
+void _confirmarExclusao(BuildContext context, VoidCallback onConfirm) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return ConfirmDeleteDialog(
+        title: 'Confirmar Exclusão',
+        content:
+            'Tem certeza que deseja excluir este registro? Esta ação não pode ser desfeita.',
+        onConfirm: onConfirm,
+      );
+    },
+  );
 }

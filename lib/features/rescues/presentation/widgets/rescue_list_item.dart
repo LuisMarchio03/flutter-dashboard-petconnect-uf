@@ -12,7 +12,7 @@ class RescueListItem extends StatelessWidget {
     required this.rescue,
     required this.onDetails,
     required this.onUpdateStatus,
-    required this.onEdit,
+    required this.onEdit, required Null Function() onDelete,
   }) : super(key: key);
 
   @override

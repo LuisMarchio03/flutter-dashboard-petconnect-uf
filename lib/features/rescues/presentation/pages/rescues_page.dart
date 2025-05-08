@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/core/widgets/confirm_delete_dialog.dart';
 import 'package:myapp/core/widgets/sidebar_menu.dart';
 import 'package:myapp/features/rescues/domain/models/rescue_form_model.dart';
 import 'package:myapp/features/rescues/presentation/pages/rescue_form_page.dart';
@@ -18,7 +19,8 @@ class _RescuesPageState extends State<RescuesPage> {
   final List<RescueModel> resgates = [
     RescueModel(
       endereco: '123 Rua Principal, Apt 4B',
-      descricao: 'Gato ferido encontrado embaixo de um carro estacionado. Parece ter uma pata ferida e é incapaz de andar corretamente. Muito assustado, mas não agressivo.',
+      descricao:
+          'Gato ferido encontrado embaixo de um carro estacionado. Parece ter uma pata ferida e é incapaz de andar corretamente. Muito assustado, mas não agressivo.',
       especie: 'Gato doméstico',
       status: 'Ativo',
       data: '2023-09-25',
@@ -28,7 +30,8 @@ class _RescuesPageState extends State<RescuesPage> {
     ),
     RescueModel(
       endereco: 'Avenida Oak, 456',
-      descricao: 'O guaxinim parece estar desorientado e andando em círculos. Possivelmente doente ou ferido. Localizado perto do parque infantil. Preocupado com a segurança pública.',
+      descricao:
+          'O guaxinim parece estar desorientado e andando em círculos. Possivelmente doente ou ferido. Localizado perto do parque infantil. Preocupado com a segurança pública.',
       especie: 'Guaxinim',
       status: 'Pendente',
       data: '2023-09-24',
@@ -136,7 +139,9 @@ class _RescuesPageState extends State<RescuesPage> {
                       const SizedBox(width: 16),
                       // Botão de adicionar resgate
                       ElevatedButton.icon(
-                        onPressed: _adicionarResgate,
+                        onPressed: () {
+                          _adicionarResgate();
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF00A3D7),
                           padding: const EdgeInsets.symmetric(
@@ -149,7 +154,7 @@ class _RescuesPageState extends State<RescuesPage> {
                         ),
                         icon: const Icon(Icons.add, color: Colors.white),
                         label: const Text(
-                          'Adicionar Resgate',
+                          'Novo Resgate',
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
@@ -178,15 +183,18 @@ class _RescuesPageState extends State<RescuesPage> {
                         itemBuilder: (context, index) {
                           return RescueListItem(
                             rescue: resgates[index],
-                            onDetails: () {
-                              // Implementar visualização de detalhes
+                            onEdit: () {
+                              _editarResgate(index);
                             },
-                            onUpdateStatus: () {
-                              // Implementar atualização de status
-                            }, 
-                            onEdit: () { 
-                              // Implementar edição
-                             },
+                            onDelete: () {
+                              _confirmarExclusao(context, () {
+                                setState(() {
+                                  resgates.removeAt(index);
+                                });
+                              });
+                            },
+                            onDetails: () {},
+                            onUpdateStatus: () {},
                           );
                         },
                       ),
@@ -228,7 +236,9 @@ class _RescuesPageState extends State<RescuesPage> {
                               decoration: const BoxDecoration(
                                 color: Color(0xFF00A3D7),
                                 border: Border.symmetric(
-                                  vertical: BorderSide(color: Color(0xFFE5E7EB)),
+                                  vertical: BorderSide(
+                                    color: Color(0xFFE5E7EB),
+                                  ),
                                 ),
                               ),
                               child: const Text(
@@ -268,10 +278,7 @@ class _RescuesPageState extends State<RescuesPage> {
       ),
       child: ListTile(
         leading: Icon(icon, color: Colors.white),
-        title: Text(
-          text,
-          style: const TextStyle(color: Colors.white),
-        ),
+        title: Text(text, style: const TextStyle(color: Colors.white)),
         onTap: () {
           // Implementar navegação
         },
@@ -285,60 +292,44 @@ class _RescuesPageState extends State<RescuesPage> {
   void _adicionarResgate() async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const RescueFormPage(),
-      ),
+      MaterialPageRoute(builder: (context) => const RescueFormPage()),
     );
 
-    if (result != null && result is RescueFormModel) {
+    if (result != null) {
       setState(() {
-        resgates.add(RescueModel(
-          endereco: result.endereco,
-          data: result.data,
-          hora: result.hora,
-          descricao: result.descricao,
-          status: 'Pendente',
-          nomeAnimal: result.nomeAnimal,
-          especie: result.especie,
-          idade: result.idade,
-          sexo: result.sexo,
-          condicaoAnimal: result.condicaoAnimal,
-          observacoes: result.observacoes,
-          fotos: result.fotos,
-        ));
+        resgates.add(result);
       });
     }
   }
 
-  // Método para editar um resgate existente
-  void _editarResgate(RescueModel resgate, int index) async {
+  void _editarResgate(int index) async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RescueFormPage(
-          rescue: resgate,
-          isEditing: true,
-        ),
+        builder:
+            (context) =>
+                RescueFormPage(rescue: resgates[index], isEditing: true),
       ),
     );
 
-    if (result != null && result is RescueFormModel) {
+    if (result != null) {
       setState(() {
-        resgates[index] = RescueModel(
-          endereco: result.endereco,
-          data: result.data,
-          hora: result.hora,
-          descricao: result.descricao,
-          status: resgate.status, // Manter o status original
-          nomeAnimal: result.nomeAnimal,
-          especie: result.especie,
-          idade: result.idade,
-          sexo: result.sexo,
-          condicaoAnimal: result.condicaoAnimal,
-          observacoes: result.observacoes,
-          fotos: result.fotos,
-        );
+        resgates[index] = result;
       });
     }
   }
+}
+
+void _confirmarExclusao(BuildContext context, VoidCallback onConfirm) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return ConfirmDeleteDialog(
+        title: 'Confirmar Exclusão',
+        content:
+            'Tem certeza que deseja excluir este registro? Esta ação não pode ser desfeita.',
+        onConfirm: onConfirm,
+      );
+    },
+  );
 }

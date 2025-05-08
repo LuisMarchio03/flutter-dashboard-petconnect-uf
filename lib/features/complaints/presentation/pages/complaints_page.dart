@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/core/widgets/confirm_delete_dialog.dart';
 import 'package:myapp/core/widgets/sidebar_menu.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../domain/models/complaint_model.dart';
@@ -131,17 +132,22 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                       const SizedBox(width: 16),
                       // Botão de adicionar denúncia
                       ElevatedButton.icon(
-                        onPressed: _adicionarDenuncia,
+                        onPressed: () {
+                          _adicionarDenuncia();
+                        },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
+                          backgroundColor: const Color(0xFF00A3D7),
                           padding: const EdgeInsets.symmetric(
                             horizontal: 16,
                             vertical: 12,
                           ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                         ),
                         icon: const Icon(Icons.add, color: Colors.white),
                         label: const Text(
-                          'Adicionar Denúncia',
+                          'Nova Denúncia',
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
@@ -194,16 +200,27 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                               itemCount: denuncias.length,
                               itemBuilder: (context, index) {
                                 return ComplaintListItem(
-                                  onDetails:
-                                      () {}, // Added required onDetails callback
+                                  onDetails: () {},
                                   complaint: denuncias[index],
                                   onEdit: () => _editarDenuncia(index),
                                   onDelete: () {
-                                    setState(() {
-                                      denuncias.removeAt(index);
+                                    _confirmarExclusao(context, () {
+                                      setState(() {
+                                        denuncias.removeAt(index);
+                                      });
                                     });
                                   },
-                                  onAttend: () {},
+                                  onAttend: () {
+                                    setState(() {
+                                      denuncias[index] = ComplaintModel(
+                                        endereco: denuncias[index].endereco,
+                                        dataReporte:
+                                            denuncias[index].dataReporte,
+                                        descricao: denuncias[index].descricao,
+                                        status: 'Em Atendimento',
+                                      );
+                                    });
+                                  },
                                 );
                               },
                             ),
@@ -271,20 +288,15 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
 
   // Método para editar uma denúncia existente
   void _editarDenuncia(int index) async {
-    // Criar um ComplaintFormModel a partir do ComplaintModel
-    final denuncia = denuncias[index];
-    final formModel = ComplaintFormModel(
-      nomeCompleto:
-          'Nome do Denunciante', // Valor padrão, já que não temos esse campo no modelo atual
-      numeroCelular:
-          '(00) 00000-0000', // Valor padrão, já que não temos esse campo no modelo atual
-      endereco: denuncia.endereco,
-      especieAnimal:
-          'Não especificado', // Valor padrão, já que não temos esse campo no modelo atual
-      localizacao:
-          'Não especificado', // Valor padrão, já que não temos esse campo no modelo atual
-      descricao: denuncia.descricao,
-      status: denuncia.status,
+    // Convert ComplaintModel to ComplaintFormModel
+    final complaintForm = ComplaintFormModel(
+      nomeCompleto: '', // Add default or placeholder values
+      numeroCelular: '',
+      endereco: denuncias[index].endereco,
+      especieAnimal: '', // Add default value
+      localizacao: '', // Add default value
+      descricao: denuncias[index].descricao,
+      status: denuncias[index].status,
     );
 
     final result = await Navigator.push(
@@ -292,20 +304,37 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
       MaterialPageRoute(
         builder:
             (context) =>
-                ComplaintFormPage(complaint: formModel, isEditing: true),
+                ComplaintFormPage(complaint: complaintForm, isEditing: true),
       ),
     );
 
     if (result != null && result is ComplaintFormModel) {
       setState(() {
-        // Atualizar o ComplaintModel com os dados do ComplaintFormModel
+        // Atualizar a denúncia existente
         denuncias[index] = ComplaintModel(
           endereco: result.endereco,
-          dataReporte: denuncia.dataReporte, // Manter a data original
+          dataReporte: denuncias[index].dataReporte,
           descricao: result.descricao,
           status: result.status,
+          // Remove these properties as they don't exist in ComplaintModel
+          // tipoAnimal: result.tipoAnimal,
+          // tipoSituacao: result.tipoSituacao,
         );
       });
     }
   }
+}
+
+void _confirmarExclusao(BuildContext context, VoidCallback onConfirm) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return ConfirmDeleteDialog(
+        title: 'Confirmar Exclusão',
+        content:
+            'Tem certeza que deseja excluir este registro? Esta ação não pode ser desfeita.',
+        onConfirm: onConfirm,
+      );
+    },
+  );
 }
