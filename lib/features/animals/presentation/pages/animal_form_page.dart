@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/core/widgets/sidebar_menu.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../domain/models/animal_model.dart';
 
@@ -108,63 +109,7 @@ class _AnimalFormPageState extends State<AnimalFormPage> {
       body: Row(
         children: [
           // Menu lateral
-          Container(
-            width: 160,
-            color: const Color(0xFF00A3D7),
-            child: Column(
-              children: [
-                const SizedBox(height: 40),
-                // Logo
-                Column(
-                  children: [
-                    Image.asset(
-                      'assets/logo.png',
-                      width: 60,
-                      height: 60,
-                    ),
-                    const Text(
-                      'PetConnect',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const Text(
-                      'Conectando Vidas',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 40),
-                // Itens do menu
-                _buildMenuItem(Icons.dashboard, 'Dashboard', false),
-                _buildMenuItem(Icons.announcement, 'Denúncias', false),
-                _buildMenuItem(Icons.pets, 'Animais', true),
-                _buildMenuItem(Icons.assignment, 'Resgates', false),
-                _buildMenuItem(Icons.people, 'Usuários', false),
-                const Spacer(),
-                // Botões de tema
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.dark_mode, color: Colors.white),
-                      onPressed: () {},
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.light_mode, color: Colors.white),
-                      onPressed: () {},
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-              ],
-            ),
-          ),
+          const SidebarMenu(selectedItem: 'Animais'),
           // Conteúdo principal
           Expanded(
             child: SingleChildScrollView(
