@@ -55,7 +55,7 @@ class PetConnectApp extends StatelessWidget {
           return MaterialPageRoute(
             builder: (context) => RescueFormPage(
               rescue: args != null ? args as RescueModel : null,
-              isEditing: args != null,
+              isEditing: args != null, title: 'Registrar Resgate',
             ),
           );
         }

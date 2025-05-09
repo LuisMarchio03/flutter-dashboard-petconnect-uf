@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/core/widgets/confirm_delete_dialog.dart';
 import 'package:myapp/core/widgets/sidebar_menu.dart';
+import 'package:myapp/features/animals/presentation/widgets/header_widget.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../domain/models/complaint_model.dart';
 import '../../domain/models/complaint_form_model.dart';
@@ -25,7 +26,8 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
       descricao:
           'Cachorro amarrado sem água e comida, exposto ao sol. Animal aparenta estar desnutrido e com ferimentos.',
       status: 'Pendente',
-      imagemUrl: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1169&q=80',
+      imagemUrl:
+          'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1169&q=80',
     ),
     ComplaintModel(
       endereco: 'Av. Principal, 456 - Jardim',
@@ -33,7 +35,8 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
       descricao:
           'Colônia de gatos em terreno abandonado sem acesso a alimentos. Vários filhotes em condições precárias.',
       status: 'Atendido',
-      imagemUrl: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1143&q=80',
+      imagemUrl:
+          'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1143&q=80',
     ),
     ComplaintModel(
       endereco: 'Praça Central, s/n - Centro',
@@ -41,31 +44,49 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
       descricao:
           'Cão de grande porte abandonado na praça, aparentemente sem dono. Animal está magro e com comportamento agressivo.',
       status: 'Pendente',
-      imagemUrl: 'https://images.unsplash.com/photo-1561037404-61cd46aa615b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
+      imagemUrl:
+          'https://images.unsplash.com/photo-1561037404-61cd46aa615b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
     ),
   ];
 
   final TextEditingController _searchController = TextEditingController();
-  
+
   // Filtros
   String _statusFiltro = 'Todos';
   String _dataFiltro = 'Todos';
-  
+
   // Lista de opções para os filtros
-  final List<String> _statusOptions = ['Todos', 'Pendente', 'Em andamento', 'Atendido', 'Cancelado'];
-  final List<String> _dataOptions = ['Todos', 'Hoje', 'Esta semana', 'Este mês'];
-  
+  final List<String> _statusOptions = [
+    'Todos',
+    'Pendente',
+    'Em andamento',
+    'Atendido',
+    'Cancelado',
+  ];
+  final List<String> _dataOptions = [
+    'Todos',
+    'Hoje',
+    'Esta semana',
+    'Este mês',
+  ];
+
   // Lista filtrada
   List<ComplaintModel> get _denunciasFiltradas {
     return denuncias.where((denuncia) {
       // Filtro de texto
-      final matchesSearch = _searchController.text.isEmpty || 
-          denuncia.endereco.toLowerCase().contains(_searchController.text.toLowerCase()) ||
-          denuncia.descricao.toLowerCase().contains(_searchController.text.toLowerCase());
-      
+      final matchesSearch =
+          _searchController.text.isEmpty ||
+          denuncia.endereco.toLowerCase().contains(
+            _searchController.text.toLowerCase(),
+          ) ||
+          denuncia.descricao.toLowerCase().contains(
+            _searchController.text.toLowerCase(),
+          );
+
       // Filtro de status
-      final matchesStatus = _statusFiltro == 'Todos' || denuncia.status == _statusFiltro;
-      
+      final matchesStatus =
+          _statusFiltro == 'Todos' || denuncia.status == _statusFiltro;
+
       // Filtro de data (simplificado para demonstração)
       bool matchesDate = true;
       if (_dataFiltro != 'Todos') {
@@ -73,7 +94,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
         // Este é apenas um exemplo simplificado
         matchesDate = true;
       }
-      
+
       return matchesSearch && matchesStatus && matchesDate;
     }).toList();
   }
@@ -83,16 +104,14 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
     _searchController.dispose();
     super.dispose();
   }
-  
+
   // Método para adicionar nova denúncia
   void _adicionarDenuncia() async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => ComplaintFormPage(),
-      ),
+      MaterialPageRoute(builder: (context) => ComplaintFormPage()),
     );
-    
+
     if (result != null && result is ComplaintModel) {
       setState(() {
         denuncias.add(result);
@@ -112,68 +131,13 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
             child: Column(
               children: [
                 // Header global
-                 Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Denúncias',
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF333333),
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          const Text(
-                            'Listagem de denúncias',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Color(0xFF6B7280),
-                            ),
-                          ),
-                        ],
-                      ),
-                      // Perfil do usuário
-                      Row(
-                        children: [
-                          const CircleAvatar(
-                            radius: 16,
-                            backgroundImage: NetworkImage(
-                              'https://randomuser.me/api/portraits/men/1.jpg',
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Andrew D.',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF333333),
-                                ),
-                              ),
-                              const Text(
-                                'admin@gmail.com',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Color(0xFF6B7280),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
+                Container(
+                  padding: const EdgeInsets.all(24.0),
+                  child: HeaderWidget(
+                    title: 'Adotantes',
+                    subtitle: 'Preencha os dados do adotante',
                   ),
                 ),
-                
                 // Conteúdo da página
                 Expanded(
                   child: Padding(
@@ -201,13 +165,16 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFF00A3D7),
                                 foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 15,
+                                ),
                               ),
                             ),
                           ],
                         ),
                         const SizedBox(height: 24),
-                        
+
                         // Barra de pesquisa e filtros
                         Row(
                           children: [
@@ -221,7 +188,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                               ),
                             ),
                             const SizedBox(width: 16),
-                            
+
                             // Filtro de status
                             _buildFilterDropdown(
                               label: 'Status',
@@ -233,9 +200,9 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                                 });
                               },
                             ),
-                            
+
                             const SizedBox(width: 16),
-                            
+
                             // Filtro de data
                             _buildFilterDropdown(
                               label: 'Data',
@@ -250,7 +217,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                           ],
                         ),
                         const SizedBox(height: 24),
-                        
+
                         // Contador de resultados
                         Text(
                           '${_denunciasFiltradas.length} denúncias encontradas',
@@ -260,13 +227,15 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                           ),
                         ),
                         const SizedBox(height: 16),
-                        
+
                         // Lista de denúncias
                         Expanded(
                           child: ListView.builder(
                             itemCount: _denunciasFiltradas.length,
                             itemBuilder: (context, index) {
-                              final denunciaIndex = denuncias.indexOf(_denunciasFiltradas[index]);
+                              final denunciaIndex = denuncias.indexOf(
+                                _denunciasFiltradas[index],
+                              );
                               return ComplaintListItem(
                                 onDetails: () {
                                   _abrirDetalhes(denunciaIndex);
@@ -276,20 +245,30 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                                   final result = await Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => ComplaintFormPage(
-                                        complaint: ComplaintFormModel(
-                                          endereco: denuncias[denunciaIndex].endereco,
-                                          descricao: denuncias[denunciaIndex].descricao,
-                                          status: denuncias[denunciaIndex].status, 
-                                          nomeCompleto: '',
-                                          especieAnimal:'', 
-                                          numeroCelular: '',
-                                          localizacao: denuncias[denunciaIndex].endereco,
-                                        ),
-                                      ),
+                                      builder:
+                                          (context) => ComplaintFormPage(
+                                            complaint: ComplaintFormModel(
+                                              endereco:
+                                                  denuncias[denunciaIndex]
+                                                      .endereco,
+                                              descricao:
+                                                  denuncias[denunciaIndex]
+                                                      .descricao,
+                                              status:
+                                                  denuncias[denunciaIndex]
+                                                      .status,
+                                              nomeCompleto: '',
+                                              especieAnimal: '',
+                                              numeroCelular: '',
+                                              localizacao:
+                                                  denuncias[denunciaIndex]
+                                                      .endereco,
+                                            ),
+                                          ),
                                     ),
                                   );
-                                  if (result != null && result is ComplaintModel) {
+                                  if (result != null &&
+                                      result is ComplaintModel) {
                                     setState(() {
                                       denuncias[denunciaIndex] = result;
                                     });
@@ -306,11 +285,16 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                                   _confirmarAtendimento(context, () {
                                     setState(() {
                                       denuncias[denunciaIndex] = ComplaintModel(
-                                        endereco: denuncias[denunciaIndex].endereco,
-                                        dataReporte: denuncias[denunciaIndex].dataReporte,
-                                        descricao: denuncias[denunciaIndex].descricao,
+                                        endereco:
+                                            denuncias[denunciaIndex].endereco,
+                                        dataReporte:
+                                            denuncias[denunciaIndex]
+                                                .dataReporte,
+                                        descricao:
+                                            denuncias[denunciaIndex].descricao,
                                         status: 'Em Atendimento',
-                                        imagemUrl: denuncias[denunciaIndex].imagemUrl,
+                                        imagemUrl:
+                                            denuncias[denunciaIndex].imagemUrl,
                                       );
                                     });
                                   });
@@ -330,7 +314,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
       ),
     );
   }
-  
+
   // Widget para construir os dropdowns de filtro
   Widget _buildFilterDropdown({
     required String label,
@@ -350,12 +334,10 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
           icon: const Icon(Icons.keyboard_arrow_down),
           isDense: true,
           hint: Text(label),
-          items: items.map((String item) {
-            return DropdownMenuItem<String>(
-              value: item,
-              child: Text(item),
-            );
-          }).toList(),
+          items:
+              items.map((String item) {
+                return DropdownMenuItem<String>(value: item, child: Text(item));
+              }).toList(),
           onChanged: onChanged,
         ),
       ),
@@ -369,7 +351,9 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Confirmar Exclusão'),
-          content: const Text('Tem certeza que deseja excluir esta denúncia? Esta ação não pode ser desfeita.'),
+          content: const Text(
+            'Tem certeza que deseja excluir esta denúncia? Esta ação não pode ser desfeita.',
+          ),
           actions: [
             TextButton(
               onPressed: () {
@@ -382,9 +366,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                 Navigator.of(context).pop(); // Fecha o diálogo
                 onConfirm(); // Executa a ação de exclusão
               },
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.red,
-              ),
+              style: TextButton.styleFrom(foregroundColor: Colors.red),
               child: const Text('Excluir'),
             ),
           ],
@@ -429,12 +411,10 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ComplaintDetailsPage(
-          complaint: denuncias[index],
-        ),
+        builder: (context) => ComplaintDetailsPage(complaint: denuncias[index]),
       ),
     );
-    
+
     // Atualizar o status se retornou um resultado
     if (result != null && result is ComplaintModel) {
       setState(() {

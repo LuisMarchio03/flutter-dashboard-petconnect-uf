@@ -3,6 +3,7 @@ import 'package:myapp/core/widgets/confirm_delete_dialog.dart';
 import 'package:myapp/core/widgets/data_table_widget.dart';
 import 'package:myapp/core/widgets/sidebar_menu.dart';
 import 'package:myapp/core/widgets/status_badge_widget.dart';
+import 'package:myapp/features/animals/presentation/widgets/header_widget.dart';
 import 'package:myapp/features/rescues/domain/models/rescue_form_model.dart';
 import 'package:myapp/features/rescues/presentation/pages/rescue_form_page.dart';
 import 'package:myapp/features/animals/presentation/pages/animal_form_page.dart';
@@ -108,68 +109,14 @@ class _RescuesPageState extends State<RescuesPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Cabeçalho
-                Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Resgate',
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF333333),
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          const Text(
-                            'Listagem de resgate',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Color(0xFF6B7280),
-                            ),
-                          ),
-                        ],
-                      ),
-                      // Perfil do usuário
-                      Row(
-                        children: [
-                          const CircleAvatar(
-                            radius: 16,
-                            backgroundImage: NetworkImage(
-                              'https://randomuser.me/api/portraits/men/1.jpg',
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Andrew D.',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF333333),
-                                ),
-                              ),
-                              const Text(
-                                'admin@gmail.com',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Color(0xFF6B7280),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
+                  Container(
+                  padding: const EdgeInsets.all(24.0),
+                  child: HeaderWidget(
+                    title: 'Resgates',
+                    subtitle: 'Lista de resgates',
                   ),
                 ),
-                // Barra de pesquisa e filtros
+              // Barra de pesquisa e filtros
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Row(
@@ -221,7 +168,7 @@ class _RescuesPageState extends State<RescuesPage> {
                       // Botão de adicionar resgate
                       ElevatedButton.icon(
                         onPressed: () {
-                          _adicionarResgate();
+                          _adicionarNovoResgate();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF00A3D7),
@@ -294,7 +241,7 @@ class _RescuesPageState extends State<RescuesPage> {
                           tooltip: 'Ver detalhes',
                           onPressed:
                               (index) =>
-                                  _verDetalhesResgate(resgatesFiltrados[index]),
+                                  _visualizarResgate(resgatesFiltrados[index]),
                         ),
                         DataTableAction(
                           icon: Icons.edit,
@@ -304,7 +251,9 @@ class _RescuesPageState extends State<RescuesPage> {
                             final originalIndex = resgates.indexOf(
                               resgatesFiltrados[index],
                             );
-                            _editarResgate(originalIndex);
+                            _editarResgate(
+                              resgatesFiltrados[index],
+                            );
                           },
                         ),
                         DataTableAction(
@@ -476,33 +425,53 @@ class _RescuesPageState extends State<RescuesPage> {
   // }
 
   // Método para adicionar um novo resgate
-  void _adicionarResgate() async {
+  void _adicionarNovoResgate() async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const RescueFormPage()),
+      MaterialPageRoute(
+        builder: (context) => const RescueFormPage(title: 'Novo Resgate'),
+      ),
     );
 
-    if (result != null) {
+    if (result != null && result is RescueModel) {
       setState(() {
         resgates.add(result);
       });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Resgate cadastrado com sucesso!'),
+          backgroundColor: Colors.green,
+        ),
+      );
     }
   }
 
-  void _editarResgate(int index) async {
+  void _editarResgate(RescueModel resgate) async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
         builder:
-            (context) =>
-                RescueFormPage(rescue: resgates[index], isEditing: true),
+            (context) => RescueFormPage(
+              rescue: resgate,
+              isEditing: true,
+              title: 'Editar Resgate',
+            ),
       ),
     );
 
-    if (result != null) {
+    if (result != null && result is RescueModel) {
       setState(() {
-        resgates[index] = result;
+        final index = resgates.indexWhere((r) => r.id == result.id);
+        if (index != -1) {
+          resgates[index] = result;
+        }
       });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Resgate atualizado com sucesso!'),
+          backgroundColor: Colors.green,
+        ),
+      );
     }
   }
 
@@ -632,6 +601,24 @@ class _RescuesPageState extends State<RescuesPage> {
       context,
       MaterialPageRoute(builder: (context) => AnimalFormPage(resgate: resgate)),
     );
+  }
+
+  void _visualizarResgate(RescueModel resgate) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RescueDetailsPage(rescue: resgate),
+      ),
+    );
+
+    if (result != null && result is RescueModel) {
+      setState(() {
+        final index = resgates.indexWhere((r) => r.id == result.id);
+        if (index != -1) {
+          resgates[index] = result;
+        }
+      });
+    }
   }
 }
 

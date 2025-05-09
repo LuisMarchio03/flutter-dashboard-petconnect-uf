@@ -82,7 +82,7 @@ class _UsersPageState extends State<UsersPage> {
     final result = await AppRoutes.navigateTo<UserFormModel>(
       context,
       AppRoutes.userForm,
-      arguments: usuario as UserFormModel,
+      
     );
 
     if (result != null) {

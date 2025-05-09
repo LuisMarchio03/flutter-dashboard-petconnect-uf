@@ -3,12 +3,23 @@ import 'package:myapp/core/widgets/sidebar_menu.dart';
 import 'package:myapp/features/rescues/domain/models/rescue_model.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../domain/models/animal_model.dart';
+import '../widgets/header_widget.dart';
+import '../widgets/form_section_widget.dart';
+import '../widgets/custom_text_field.dart';
+import '../widgets/date_picker_field.dart';
+import '../widgets/action_buttons.dart';
 
 class AnimalFormPage extends StatefulWidget {
   final AnimalModel? animal;
   final bool isEditing;
+  final RescueModel resgate;
 
-  const AnimalFormPage({super.key, this.animal, this.isEditing = false, required RescueModel resgate});
+  const AnimalFormPage({
+    super.key, 
+    this.animal, 
+    this.isEditing = false, 
+    required this.resgate
+  });
 
   @override
   State<AnimalFormPage> createState() => _AnimalFormPageState();
@@ -34,6 +45,9 @@ class _AnimalFormPageState extends State<AnimalFormPage> {
 
   DateTime? _ultimaVacina;
   DateTime? _proximaVacina;
+
+  final List<String> _generoOptions = ['Macho', 'Fêmea'];
+  final List<String> _statusOptions = ['Disponível', 'Adotado', 'Em tratamento'];
 
   @override
   void initState() {
@@ -100,6 +114,55 @@ class _AnimalFormPageState extends State<AnimalFormPage> {
     }
   }
 
+  Widget _buildDropdown({
+    required String label,
+    required String value,
+    required List<String> items,
+    required Function(String?) onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontWeight: FontWeight.w500,
+            fontSize: 14,
+            color: Color(0xFF374151),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFFF9FAFB),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey.shade300),
+          ),
+          child: DropdownButtonFormField<String>(
+            value: value,
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ),
+            ),
+            items: items.map((String item) {
+              return DropdownMenuItem<String>(
+                value: item,
+                child: Text(item),
+              );
+            }).toList(),
+            onChanged: onChanged,
+            icon: const Icon(Icons.arrow_drop_down, color: Color(0xFF6B7280)),
+            dropdownColor: Colors.white,
+            elevation: 8,
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -107,370 +170,231 @@ class _AnimalFormPageState extends State<AnimalFormPage> {
         children: [
           // Menu lateral
           const SidebarMenu(selectedItem: 'Animais'),
+          
           // Conteúdo principal
           Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Cabeçalho
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
+            child: Container(
+              color: const Color(0xFFF9FAFB),
+              child: Column(
+                children: [
+                  // Cabeçalho
+                  Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 10,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: HeaderWidget(
+                      title: widget.isEditing ? 'Editar Animal' : 'Adicionar Animal',
+                      subtitle: 'Preencha os dados do animal',
+                    ),
+                  ),
+                  
+                  // Conteúdo do formulário
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(24),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              widget.isEditing
-                                  ? 'Editar Animal'
-                                  : 'Adicionar Animal',
-                              style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.textPrimary,
-                              ),
-                            ),
-                            const Text(
-                              'Preencha os dados do animal',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: AppColors.textSecondary,
-                              ),
-                            ),
-                          ],
-                        ),
-                        // Perfil do usuário
-                        Row(
-                          children: [
-                            const CircleAvatar(
-                              radius: 20,
-                              backgroundImage: NetworkImage(
-                                'https://randomuser.me/api/portraits/men/1.jpg',
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            // Informações Básicas
+                            FormSectionWidget(
+                              title: 'Informações Básicas',
                               children: [
-                                const Text(
-                                  'Andrew D.',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                  ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: CustomTextField(
+                                        label: 'Nome',
+                                        controller: _nomeController,
+                                        prefixIcon: Icons.pets,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: _buildDropdown(
+                                        label: 'Gênero',
+                                        value: _genero,
+                                        items: _generoOptions,
+                                        onChanged: (value) {
+                                          if (value != null) {
+                                            setState(() {
+                                              _genero = value;
+                                            });
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                Text(
-                                  'admin@gmail.com',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey[600],
-                                  ),
+                                const SizedBox(height: 16),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: CustomTextField(
+                                        label: 'Espécie',
+                                        controller: _especieController,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: _buildDropdown(
+                                        label: 'Status',
+                                        value: _status,
+                                        items: _statusOptions,
+                                        onChanged: (value) {
+                                          if (value != null) {
+                                            setState(() {
+                                              _status = value;
+                                            });
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            
+                            // Características Físicas
+                            FormSectionWidget(
+                              title: 'Características Físicas',
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: CustomTextField(
+                                        label: 'Raça',
+                                        controller: _racaController,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: CustomTextField(
+                                        label: 'Cor',
+                                        controller: _corController,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 16),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: CustomTextField(
+                                        label: 'Porte',
+                                        controller: _porteController,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: CustomTextField(
+                                        label: 'Peso (kg)',
+                                        controller: _pesoController,
+                                        keyboardType: TextInputType.number,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 16),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: CustomTextField(
+                                        label: 'Idade',
+                                        controller: _idadeController,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: CustomTextField(
+                                        label: 'Onde foi localizado?',
+                                        controller: _localizacaoController,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 16),
+                                CustomTextField(
+                                  label: 'Observações',
+                                  controller: _observacoesController,
+                                  maxLines: 3,
+                                ),
+                              ],
+                            ),
+                            
+                            // Informações de Saúde
+                            FormSectionWidget(
+                              title: 'Informações de Saúde',
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: DatePickerField(
+                                        label: 'Última Vacina',
+                                        selectedDate: _ultimaVacina,
+                                        initialDate: DateTime.now(),
+                                        firstDate: DateTime(2000),
+                                        lastDate: DateTime.now(),
+                                        onDateSelected: (date) {
+                                          setState(() {
+                                            _ultimaVacina = date;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: DatePickerField(
+                                        label: 'Próxima Vacina',
+                                        selectedDate: _proximaVacina,
+                                        initialDate: DateTime.now().add(const Duration(days: 30)),
+                                        firstDate: DateTime.now(),
+                                        lastDate: DateTime(2100),
+                                        onDateSelected: (date) {
+                                          setState(() {
+                                            _proximaVacina = date;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 16),
+                                CustomTextField(
+                                  label: 'Condições Médicas',
+                                  controller: _condicoesMedicasController,
+                                  maxLines: 3,
                                 ),
                               ],
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 32),
-                    // Formulário
-                    Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Informações Detalhadas
-                          const Text(
-                            'Informações Detalhadas',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          // Raça
-                          _buildTextField(
-                            label: 'Raça',
-                            controller: _racaController,
-                          ),
-                          const SizedBox(height: 16),
-                          // Cor
-                          _buildTextField(
-                            label: 'Cor',
-                            controller: _corController,
-                          ),
-                          const SizedBox(height: 16),
-                          // Peso
-                          _buildTextField(
-                            label: 'Peso (kg)',
-                            controller: _pesoController,
-                            keyboardType: TextInputType.number,
-                          ),
-                          const SizedBox(height: 16),
-                          // Observações
-                          _buildTextField(
-                            label: 'Observações',
-                            controller: _observacoesController,
-                            maxLines: 3,
-                          ),
-                          const SizedBox(height: 16),
-                          // Porte
-                          _buildTextField(
-                            label: 'Porte',
-                            controller: _porteController,
-                          ),
-                          const SizedBox(height: 16),
-                          // Espécie
-                          _buildTextField(
-                            label: 'Espécie',
-                            controller: _especieController,
-                          ),
-                          const SizedBox(height: 16),
-                          // Idade
-                          _buildTextField(
-                            label: 'Idade',
-                            controller: _idadeController,
-                          ),
-                          const SizedBox(height: 16),
-                          // Localização
-                          _buildTextField(
-                            label: 'Onde ele foi localizado?',
-                            controller: _localizacaoController,
-                          ),
-                          const SizedBox(height: 32),
-
-                          // Informações de Saúde
-                          const Text(
-                            'Informações de Saúde',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          // Última Vacina
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text('Última Vacina'),
-                                    const SizedBox(height: 8),
-                                    InkWell(
-                                      onTap: () async {
-                                        final date = await showDatePicker(
-                                          context: context,
-                                          initialDate: DateTime.now(),
-                                          firstDate: DateTime(2000),
-                                          lastDate: DateTime.now(),
-                                        );
-                                        if (date != null) {
-                                          setState(() {
-                                            _ultimaVacina = date;
-                                          });
-                                        }
-                                      },
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 16,
-                                          vertical: 12,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey[100],
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            const Icon(
-                                              Icons.calendar_today,
-                                              size: 20,
-                                              color: Colors.blue,
-                                            ),
-                                            const SizedBox(width: 8),
-                                            Text(
-                                              _ultimaVacina != null
-                                                  ? '${_ultimaVacina!.day}/${_ultimaVacina!.month}/${_ultimaVacina!.year}'
-                                                  : 'Selecionar Data',
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text('Próxima Vacina'),
-                                    const SizedBox(height: 8),
-                                    InkWell(
-                                      onTap: () async {
-                                        final date = await showDatePicker(
-                                          context: context,
-                                          initialDate: DateTime.now().add(
-                                            const Duration(days: 30),
-                                          ),
-                                          firstDate: DateTime.now(),
-                                          lastDate: DateTime(2100),
-                                        );
-                                        if (date != null) {
-                                          setState(() {
-                                            _proximaVacina = date;
-                                          });
-                                        }
-                                      },
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 16,
-                                          vertical: 12,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey[100],
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            const Icon(
-                                              Icons.calendar_today,
-                                              size: 20,
-                                              color: Colors.blue,
-                                            ),
-                                            const SizedBox(width: 8),
-                                            Text(
-                                              _proximaVacina != null
-                                                  ? '${_proximaVacina!.day}/${_proximaVacina!.month}/${_proximaVacina!.year}'
-                                                  : 'Selecionar Data',
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          // Condições Médicas
-                          _buildTextField(
-                            label: 'Condições Médicas',
-                            controller: _condicoesMedicasController,
-                            maxLines: 3,
-                          ),
-                          const SizedBox(height: 32),
-
-                          // Botões de ação
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: const Text(
-                                  'Cancelar',
-                                  style: TextStyle(color: Colors.grey),
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              ElevatedButton(
-                                onPressed: _salvarAnimal,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.primary,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 24,
-                                    vertical: 12,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                                child: const Text(
-                                  'Salvar',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  
+                  // Botões de ação
+                  ActionButtons(
+                    onCancel: () {
+                      Navigator.pop(context);
+                    },
+                    onSave: _salvarAnimal,
+                  ),
+                ],
               ),
             ),
           ),
         ],
       ),
-    );
-  }
-
-  // Widget _buildMenuItem(IconData icon, String text, bool isSelected) {
-  //   return Container(
-  //     margin: const EdgeInsets.only(bottom: 8),
-  //     decoration: BoxDecoration(
-  //       color: isSelected ? Colors.white.withOpacity(0.2) : Colors.transparent,
-  //       borderRadius: BorderRadius.circular(8),
-  //     ),
-  //     child: ListTile(
-  //       leading: Icon(icon, color: Colors.white),
-  //       title: Text(text, style: const TextStyle(color: Colors.white)),
-  //       onTap: () {},
-  //       dense: true,
-  //     ),
-  //   );
-  // }
-
-  Widget _buildTextField({
-    required String label,
-    required TextEditingController controller,
-    int maxLines = 1,
-    TextInputType keyboardType = TextInputType.text,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label),
-        const SizedBox(height: 8),
-        TextFormField(
-          controller: controller,
-          maxLines: maxLines,
-          keyboardType: keyboardType,
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: Colors.grey[100],
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide.none,
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 12,
-            ),
-          ),
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Campo obrigatório';
-            }
-            return null;
-          },
-        ),
-      ],
     );
   }
 }

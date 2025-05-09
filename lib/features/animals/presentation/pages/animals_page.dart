@@ -5,10 +5,12 @@ import 'package:myapp/core/widgets/data_table_widget.dart';
 import 'package:myapp/core/widgets/sidebar_menu.dart';
 import 'package:myapp/core/widgets/status_badge_widget.dart';
 import 'package:myapp/features/animals/presentation/pages/animal_form_page.dart';
+import 'package:myapp/features/animals/presentation/pages/animal_details_page.dart';
 import 'package:myapp/features/rescues/domain/models/rescue_model.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../domain/models/animal_model.dart';
-import '../widgets/search_bar_widget.dart';
+import '../widgets/header_widget.dart';
+import '../widgets/action_bar_widget.dart';
+import '../widgets/stats_widget.dart';
 
 class AnimalsPage extends StatefulWidget {
   const AnimalsPage({super.key});
@@ -49,218 +51,62 @@ class _AnimalsPageState extends State<AnimalsPage> {
       status: 'Disponível',
     ),
   ];
-  final List<AnimalModel> _animais = [];
+
+  // Estado para controle de visualização
+  bool _isGridView = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Row(
         children: [
-          // Menu lateral
-          const SidebarMenu(selectedItem: 'Animais'),
-          // Conteúdo principal
+          const SidebarMenu(
+            selectedItem: "Animais",
+          ),
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
+            child: Container(
+              padding: const EdgeInsets.all(24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Cabeçalho
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Animais',
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
-                          const Text(
-                            'Gestão completa dos animais',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: AppColors.textSecondary,
-                            ),
-                          ),
-                        ],
-                      ),
-                      // Perfil do usuário
-                      Row(
-                        children: [
-                          const CircleAvatar(
-                            radius: 20,
-                            backgroundImage: NetworkImage(
-                              'https://randomuser.me/api/portraits/men/1.jpg',
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Andrew D.',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              Text(
-                                'admin@gmail.com',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey[600],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                  const HeaderWidget(
+                    title: 'Animais',
+                    subtitle: 'Gerencie os animais cadastrados no sistema',
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Estatísticas
+                  const StatsWidget(
+                    stats: [
+                      {'label': 'Total de Animais', 'value': '150'},
+                      {'label': 'Disponíveis', 'value': '45'},
+                      {'label': 'Adotados', 'value': '85'},
+                      {'label': 'Em Tratamento', 'value': '20'},
                     ],
                   ),
                   const SizedBox(height: 24),
-                  // Barra de pesquisa e botão de adicionar
-                  Row(
-                    children: [
-                      const Expanded(child: SearchBarWidget()),
-                      const SizedBox(width: 16),
-                      // Atualizar o botão de adicionar animal
-                      ElevatedButton.icon(
-                        onPressed: _adicionarNovoAnimal,
-                        icon: const Icon(Icons.add, color: Colors.white),
-                        label: const Text(
-                          'Adicionar Animal',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF00A3D7),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                  // Tabela de animais
-                  DataTableWidget(
-                    columns: const ['Nome', 'Gênero', 'Raça', 'Status'],
-                    rows:
-                        animais
-                            .map(
-                              (animal) => {
-                                'nome': animal.nome,
-                                'genero': animal.genero,
-                                'raca': animal.raca,
-                                'status': animal.status,
-                              },
-                            )
-                            .toList(),
-                    customCellBuilders: {
-                      'status': (value) => StatusBadgeWidget(
-                        status: value.toString(),
-                        statusColors: {
-                          'Disponível': const Color(0xFF10B981), // Verde
-                          'Adotado': const Color(0xFF3B82F6), // Azul
-                          'Em tratamento': const Color(0xFFEAB308), // Amarelo
-                        },
-                      ),
+
+                  // Barra de Ações
+                  ActionBarWidget(
+                    onAdd: _adicionarNovoAnimal,
+                    onViewChange: (isGrid) {
+                      setState(() {
+                        _isGridView = isGrid;
+                      });
                     },
-                    actions: [
-                      DataTableAction(
-                        icon: Icons.edit,
-                        color: Colors.blue,
-                        tooltip: 'Editar',
-                        onPressed: (index) {
-                          _editarAnimal(animais[index], index);
-                        },
-                      ),
-                      DataTableAction(
-                        icon: Icons.delete,
-                        color: Colors.red,
-                        tooltip: 'Excluir',
-                        onPressed: (index) {
-                          _confirmarExclusao(context, () {
-                            setState(() {
-                              animais.removeAt(index);
-                            });
-                          });
-                        },
-                      ),
-                    ],
+                    isGridView: _isGridView,
+                    searchController: TextEditingController(),
+                    onSearch: (value) {
+                      // Implementar busca
+                    },
                   ),
-                  //   Expanded(
-                  //     child: Container(
-                  //       decoration: BoxDecoration(
-                  //         color: Colors.grey[100],
-                  //         borderRadius: BorderRadius.circular(8),
-                  //       ),
-                  //       child: Column(
-                  //         children: [
-                  //           // Cabeçalho da tabela
-                  //           Padding(
-                  //             padding: const EdgeInsets.symmetric(
-                  //               horizontal: 16,
-                  //               vertical: 12,
-                  //             ),
-                  //             child: Row(
-                  //               children: [
-                  //                 Expanded(
-                  //                   flex: 2,
-                  //                   child: _buildTableHeader('Nome'),
-                  //                 ),
-                  //                 Expanded(
-                  //                   flex: 2,
-                  //                   child: _buildTableHeader('Gênero'),
-                  //                 ),
-                  //                 Expanded(
-                  //                   flex: 2,
-                  //                   child: _buildTableHeader('Raça'),
-                  //                 ),
-                  //                 Expanded(
-                  //                   flex: 2,
-                  //                   child: _buildTableHeader('Status'),
-                  //                 ),
-                  //                 Expanded(
-                  //                   flex: 1,
-                  //                   child: _buildTableHeader('Ações'),
-                  //                 ),
-                  //               ],
-                  //             ),
-                  //           ),
-                  //           // Lista de animais
-                  //           // Na parte do ListView.builder
-                  //           Expanded(
-                  //             child: ListView.builder(
-                  //               itemCount: animais.length,
-                  //               itemBuilder: (context, index) {
-                  //                 return AnimalListItem(
-                  //                   animal: animais[index],
-                  //                   onEdit:
-                  //                       (animal) => _editarAnimal(animal, index),
-                  //                   onDelete: () {
-                  //                     _confirmarExclusao(context, () {
-                  //                       setState(() {
-                  //                         animais.removeAt(index);
-                  //                       });
-                  //                     });
-                  //                   },
-                  //                 );
-                  //               },
-                  //             ),
-                  //           ),
-                  //         ],
-                  //       ),
-                  //     ),
-                  //   ),
+                  const SizedBox(height: 24),
+
+                  // Lista de Animais
+                  Expanded(
+                    child: _isGridView ? _buildGridView() : _buildTableView(),
+                  ),
                 ],
               ),
             ),
@@ -270,31 +116,226 @@ class _AnimalsPageState extends State<AnimalsPage> {
     );
   }
 
-  // Widget _buildMenuItem(IconData icon, String text, bool isSelected) {
-  //   return Container(
-  //     margin: const EdgeInsets.only(bottom: 8),
-  //     decoration: BoxDecoration(
-  //       color: isSelected ? Colors.white.withOpacity(0.2) : Colors.transparent,
-  //       borderRadius: BorderRadius.circular(8),
-  //     ),
-  //     child: ListTile(
-  //       leading: Icon(icon, color: Colors.white),
-  //       title: Text(text, style: const TextStyle(color: Colors.white)),
-  //       onTap: () {},
-  //       dense: true,
-  //     ),
-  //   );
-  // }
+  Widget _buildTableView() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: DataTableWidget(
+        columns: const ['Nome', 'Gênero', 'Raça', 'Status'],
+        rows:
+            animais
+                .map(
+                  (animal) => {
+                    'nome': animal.nome,
+                    'genero': animal.genero,
+                    'raca': animal.raca,
+                    'status': animal.status,
+                  },
+                )
+                .toList(),
+        customCellBuilders: {
+          'status':
+              (value) => StatusBadgeWidget(
+                status: value.toString(),
+                statusColors: {
+                  'Disponível': const Color(0xFF10B981), // Verde
+                  'Adotado': const Color(0xFF3B82F6), // Azul
+                  'Em tratamento': const Color(0xFFEAB308), // Amarelo
+                },
+              ),
+        },
+        actions: [
+          DataTableAction(
+            icon: Icons.visibility,
+            color: Colors.blue,
+            tooltip: 'Ver Detalhes',
+            onPressed: (index) {
+              _verDetalhesAnimal(animais[index]);
+            },
+          ),
+          DataTableAction(
+            icon: Icons.edit,
+            color: Colors.blue,
+            tooltip: 'Editar',
+            onPressed: (index) {
+              _editarAnimal(animais[index], index);
+            },
+          ),
+          DataTableAction(
+            icon: Icons.delete,
+            color: Colors.red,
+            tooltip: 'Excluir',
+            onPressed: (index) {
+              _confirmarExclusao(context, () {
+                setState(() {
+                  animais.removeAt(index);
+                });
+              });
+            },
+          ),
+        ],
+      ),
+    );
+  }
 
-  // Widget _buildTableHeader(String text) {
-  //   return Text(
-  //     text,
-  //     style: const TextStyle(
-  //       fontWeight: FontWeight.bold,
-  //       color: AppColors.textPrimary,
-  //     ),
-  //   );
-  // }
+  Widget _buildGridView() {
+    return GridView.builder(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+        childAspectRatio: 1.2,
+      ),
+      itemCount: animais.length,
+      itemBuilder: (context, index) {
+        final animal = animais[index];
+        return _buildAnimalCard(animal, index);
+      },
+    );
+  }
+
+  Widget _buildAnimalCard(AnimalModel animal, int index) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // Cabeçalho do card
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: const Color(0xFF00A3D7).withOpacity(0.1),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(8),
+                topRight: Radius.circular(8),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    animal.nome,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Color(0xFF374151),
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                StatusBadgeWidget(
+                  status: animal.status,
+                  statusColors: {
+                    'Disponível': const Color(0xFF10B981), // Verde
+                    'Adotado': const Color(0xFF3B82F6), // Azul
+                    'Em tratamento': const Color(0xFFEAB308), // Amarelo
+                  },
+                ),
+              ],
+            ),
+          ),
+
+          // Conteúdo do card
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildInfoRow('Gênero', animal.genero),
+                  const SizedBox(height: 8),
+                  _buildInfoRow('Raça', animal.raca),
+                  const SizedBox(height: 8),
+                  _buildInfoRow('Cor', animal.cor),
+                ],
+              ),
+            ),
+          ),
+
+          // Ações do card
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.grey[50],
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(8),
+                bottomRight: Radius.circular(8),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.visibility, size: 20),
+                  onPressed: () => _verDetalhesAnimal(animal),
+                  color: Colors.blue,
+                  tooltip: 'Ver Detalhes',
+                ),
+                IconButton(
+                  icon: const Icon(Icons.edit, size: 20),
+                  onPressed: () => _editarAnimal(animal, index),
+                  color: Colors.blue,
+                  tooltip: 'Editar',
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete, size: 20),
+                  onPressed:
+                      () => _confirmarExclusao(context, () {
+                        setState(() {
+                          animais.removeAt(index);
+                        });
+                      }),
+                  color: Colors.red,
+                  tooltip: 'Excluir',
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Row(
+      children: [
+        Text(
+          '$label: ',
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: Color(0xFF6B7280),
+          ),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            style: const TextStyle(fontSize: 14, color: Color(0xFF374151)),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
 
   // Método para adicionar um novo animal
   void _adicionarNovoAnimal() async {
@@ -305,7 +346,7 @@ class _AnimalsPageState extends State<AnimalsPage> {
 
     if (result != null) {
       setState(() {
-        _animais.add(result);
+        animais.add(result);
       });
     }
   }
@@ -329,6 +370,16 @@ class _AnimalsPageState extends State<AnimalsPage> {
         animais[index] = result;
       });
     }
+  }
+
+  // Método para ver detalhes do animal
+  void _verDetalhesAnimal(AnimalModel animal) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AnimalDetailsPage(animal: animal),
+      ),
+    );
   }
 }
 

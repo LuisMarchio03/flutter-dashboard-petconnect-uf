@@ -36,7 +36,7 @@ class _RescueUpdatePageState extends State<RescueUpdatePage> {
 
   Widget _buildStatusCard(String status) {
     final bool isSelected = _selectedStatus == status;
-    
+
     return InkWell(
       onTap: () {
         setState(() {
@@ -65,7 +65,7 @@ class _RescueUpdatePageState extends State<RescueUpdatePage> {
 
   void _salvarAtualizacao() {
     // Verificar se houve mudança
-    if (_selectedStatus == widget.rescue.status && 
+    if (_selectedStatus == widget.rescue.status &&
         _observacoesController.text == (widget.rescue.observacoes ?? '')) {
       // Se não houve mudança, mostrar mensagem e retornar
       ScaffoldMessenger.of(context).showSnackBar(
@@ -76,7 +76,7 @@ class _RescueUpdatePageState extends State<RescueUpdatePage> {
       );
       return;
     }
-    
+
     // Criar um novo modelo de resgate com os dados atualizados
     final rescueAtualizado = RescueModel(
       id: widget.rescue.id,
@@ -89,11 +89,14 @@ class _RescueUpdatePageState extends State<RescueUpdatePage> {
       status: _selectedStatus,
       localizacao: widget.rescue.localizacao,
       dataResgate: widget.rescue.dataResgate,
+      responsavel: widget.rescue.responsavel,
+      contato: widget.rescue.contato,
+      origemDenuncia: widget.rescue.origemDenuncia,
     );
-    
+
     // Chamar o callback de atualização
     widget.onUpdate(rescueAtualizado);
-    
+
     // Mostrar mensagem de sucesso
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -101,22 +104,18 @@ class _RescueUpdatePageState extends State<RescueUpdatePage> {
         backgroundColor: Color(0xFF10B981),
       ),
     );
-    
-    // Retornar para a tela anterior
-    Navigator.pop(context);
-    
+
     // Se o status foi alterado para "Resgatado", redirecionar para o cadastro de animal
     if (_selectedStatus == RescueModel.STATUS_RESGATADO) {
-      Future.delayed(const Duration(milliseconds: 300), () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => AnimalFormPage(
-              resgate: rescueAtualizado,
-            ),
-          ),
-        );
-      });
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AnimalFormPage(resgate: rescueAtualizado),
+        ),
+      );
+    } else {
+      // Retornar para a tela anterior
+      Navigator.pop(context);
     }
   }
 
@@ -180,7 +179,7 @@ class _RescueUpdatePageState extends State<RescueUpdatePage> {
                       ],
                     ),
                     const SizedBox(height: 32),
-                    
+
                     // Formulário de atualização
                     Container(
                       padding: const EdgeInsets.all(24),
@@ -215,7 +214,9 @@ class _RescueUpdatePageState extends State<RescueUpdatePage> {
                                   vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: RescueModel.getStatusColor(widget.rescue.status),
+                                  color: RescueModel.getStatusColor(
+                                    widget.rescue.status,
+                                  ),
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
@@ -230,7 +231,7 @@ class _RescueUpdatePageState extends State<RescueUpdatePage> {
                             ],
                           ),
                           const SizedBox(height: 24),
-                          
+
                           // Seleção de novo status
                           const Text(
                             'Novo Status',
@@ -241,16 +242,19 @@ class _RescueUpdatePageState extends State<RescueUpdatePage> {
                             ),
                           ),
                           const SizedBox(height: 8),
-                          
+
                           // Cards de seleção de status
                           Wrap(
                             spacing: 12,
                             runSpacing: 12,
-                            children: RescueModel.getStatusList().map((status) => _buildStatusCard(status)).toList(),
+                            children:
+                                RescueModel.getStatusList()
+                                    .map((status) => _buildStatusCard(status))
+                                    .toList(),
                           ),
-                          
+
                           const SizedBox(height: 24),
-                          
+
                           // Campo de observações
                           const Text(
                             'Observações',
@@ -265,7 +269,8 @@ class _RescueUpdatePageState extends State<RescueUpdatePage> {
                             controller: _observacoesController,
                             maxLines: 4,
                             decoration: InputDecoration(
-                              hintText: 'Adicione informações sobre a atualização...',
+                              hintText:
+                                  'Adicione informações sobre a atualização...',
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                                 borderSide: const BorderSide(
@@ -280,9 +285,9 @@ class _RescueUpdatePageState extends State<RescueUpdatePage> {
                               ),
                             ),
                           ),
-                          
+
                           const SizedBox(height: 32),
-                          
+
                           // Botão de salvar
                           SizedBox(
                             width: double.infinity,
@@ -291,7 +296,9 @@ class _RescueUpdatePageState extends State<RescueUpdatePage> {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFF00A3D7),
                                 foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),

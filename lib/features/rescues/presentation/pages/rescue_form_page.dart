@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:myapp/core/widgets/sidebar_menu.dart';
-import '../../../../features/rescues/domain/models/rescue_form_model.dart';
-import '../../../../features/rescues/domain/models/rescue_model.dart';
+import '../../../../core/routes/app_routes.dart';
+import '../../../../core/widgets/sidebar_menu.dart';
+import '../../../../core/widgets/header_widget.dart';
+import '../../domain/models/rescue_model.dart';
 
 class RescueFormPage extends StatefulWidget {
-  final RescueModel? rescue;
   final bool isEditing;
+  final RescueModel? rescue;
+  final String title;
 
   const RescueFormPage({
     Key? key,
-    this.rescue,
     this.isEditing = false,
+    this.rescue,
+    required this.title,
   }) : super(key: key);
 
   @override
@@ -19,207 +22,87 @@ class RescueFormPage extends StatefulWidget {
 
 class _RescueFormPageState extends State<RescueFormPage> {
   final _formKey = GlobalKey<FormState>();
-  
-  // Controladores para os campos do formulário
-  final _nomeAnimalController = TextEditingController();
-  final _especieController = TextEditingController();
-  final _idadeController = TextEditingController();
-  final _sexoController = TextEditingController();
-  final _descricaoController = TextEditingController();
-  final _enderecoController = TextEditingController();
-  final _dataController = TextEditingController();
-  final _horaController = TextEditingController();
-  final _condicaoAnimalController = TextEditingController();
-  final _observacoesController = TextEditingController();
-  
-  String _especie = '';
-  String _sexo = '';
-  String _condicaoAnimal = '';
-  List<String> _fotos = [];
+  final _locationController = TextEditingController();
+  final _notesController = TextEditingController();
+  final _animalNameController = TextEditingController();
+  final _ageController = TextEditingController();
+  final _responsibleController = TextEditingController();
+  final _contactController = TextEditingController();
+  final _conditionController = TextEditingController();
+
+  String _selectedSpecies = 'Cachorro';
+  String _selectedStatus = RescueModel.STATUS_PENDENTE;
+  String _selectedGender = 'Macho';
+  DateTime _selectedDate = DateTime.now();
+  bool _isFromComplaint = false;
 
   @override
   void initState() {
     super.initState();
-    
-    // Se estiver editando, preencher os campos com os dados do resgate
     if (widget.isEditing && widget.rescue != null) {
-      _nomeAnimalController.text = widget.rescue!.nomeAnimal ?? '';
-      _especieController.text = widget.rescue!.especie ?? '';
-      _idadeController.text = widget.rescue!.idade ?? '';
-      _sexoController.text = widget.rescue!.sexo ?? '';
-      _descricaoController.text = widget.rescue!.observacoes!;
-      _enderecoController.text = widget.rescue!.localizacao!;
-      _dataController.text = widget.rescue!.dataResgate!;
-      _condicaoAnimalController.text = widget.rescue!.condicaoAnimal ?? '';
-      _observacoesController.text = widget.rescue!.observacoes ?? '';
-      
-      _especie = widget.rescue!.especie ?? '';
-      _sexo = widget.rescue!.sexo ?? '';
-      _condicaoAnimal = widget.rescue!.condicaoAnimal ?? '';
+      _locationController.text = widget.rescue!.localizacao ?? '';
+      _notesController.text = widget.rescue!.observacoes ?? '';
+      _animalNameController.text = widget.rescue!.nomeAnimal ?? '';
+      _ageController.text = widget.rescue!.idade ?? '';
+      _responsibleController.text = widget.rescue!.responsavel ?? '';
+      _contactController.text = widget.rescue!.contato ?? '';
+      _conditionController.text = widget.rescue!.condicaoAnimal ?? '';
+      _selectedSpecies = widget.rescue!.especie ?? 'Cachorro';
+      _selectedStatus = widget.rescue!.status;
+      _selectedGender = widget.rescue!.sexo ?? 'Macho';
+      _isFromComplaint = widget.rescue!.origemDenuncia ?? false;
+      if (widget.rescue!.dataResgate != null) {
+        _selectedDate = DateTime.parse(widget.rescue!.dataResgate!);
+      }
     }
   }
 
   @override
   void dispose() {
-    _nomeAnimalController.dispose();
-    _especieController.dispose();
-    _idadeController.dispose();
-    _sexoController.dispose();
-    _descricaoController.dispose();
-    _enderecoController.dispose();
-    _dataController.dispose();
-    _horaController.dispose();
-    _condicaoAnimalController.dispose();
-    _observacoesController.dispose();
+    _locationController.dispose();
+    _notesController.dispose();
+    _animalNameController.dispose();
+    _ageController.dispose();
+    _responsibleController.dispose();
+    _contactController.dispose();
+    _conditionController.dispose();
     super.dispose();
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+      });
+    }
   }
 
   void _salvarResgate() {
     if (_formKey.currentState!.validate()) {
-      // Criar um novo objeto RescueFormModel com os dados do formulário
-      final rescue = RescueFormModel(
-        nomeAnimal: _nomeAnimalController.text,
-        especie: _especie,
-        idade: _idadeController.text,
-        sexo: _sexo,
-        descricao: _descricaoController.text,
-        endereco: _enderecoController.text,
-        data: _dataController.text,
-        hora: _horaController.text,
-        condicaoAnimal: _condicaoAnimal,
-        observacoes: _observacoesController.text,
-        fotos: _fotos,
+      final rescue = RescueModel(
+        id: widget.rescue?.id,
+        nomeAnimal: _animalNameController.text,
+        especie: _selectedSpecies,
+        idade: _ageController.text,
+        sexo: _selectedGender,
+        condicaoAnimal: _conditionController.text,
+        localizacao: _locationController.text,
+        dataResgate: _selectedDate.toString().split(' ')[0],
+        responsavel: _responsibleController.text,
+        contato: _contactController.text,
+        observacoes: _notesController.text,
+        status: _selectedStatus,
+        origemDenuncia: _isFromComplaint,
       );
-      
-      // Retornar o objeto para a tela anterior
+
       Navigator.pop(context, rescue);
     }
-  }
-
-  Widget _buildTextField({
-    required String label,
-    required TextEditingController controller,
-    String? hintText,
-    int maxLines = 1,
-    TextInputType keyboardType = TextInputType.text,
-    bool readOnly = false,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: Color(0xFF374151),
-          ),
-        ),
-        const SizedBox(height: 8),
-        TextFormField(
-          controller: controller,
-          maxLines: maxLines,
-          keyboardType: keyboardType,
-          readOnly: readOnly,
-          decoration: InputDecoration(
-            hintText: hintText,
-            filled: true,
-            fillColor: const Color(0xFFF9FAFB),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide.none,
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 12,
-            ),
-          ),
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Campo obrigatório';
-            }
-            return null;
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDropdown({
-    required String label,
-    required String value,
-    required List<String> items,
-    required Function(String?) onChanged,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: Color(0xFF374151),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          decoration: BoxDecoration(
-            color: const Color(0xFFF9FAFB),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: DropdownButtonFormField<String>(
-            value: value.isNotEmpty ? value : null,
-            hint: Text(label),
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: const Color(0xFFF9FAFB),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide.none,
-              ),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 12,
-              ),
-            ),
-            items: items.map((String item) {
-              return DropdownMenuItem<String>(
-                value: item,
-                child: Text(item),
-              );
-            }).toList(),
-            onChanged: onChanged,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Campo obrigatório';
-              }
-              return null;
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildMenuItem(IconData icon, String text, bool isSelected) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      decoration: BoxDecoration(
-        color: isSelected ? Colors.white.withOpacity(0.2) : Colors.transparent,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: ListTile(
-        leading: Icon(icon, color: Colors.white),
-        title: Text(
-          text,
-          style: const TextStyle(color: Colors.white),
-        ),
-        onTap: () {},
-        dense: true,
-        visualDensity: const VisualDensity(horizontal: -4, vertical: -2),
-      ),
-    );
   }
 
   @override
@@ -227,315 +110,281 @@ class _RescueFormPageState extends State<RescueFormPage> {
     return Scaffold(
       body: Row(
         children: [
-          // Menu lateral
           const SidebarMenu(selectedItem: 'Resgates'),
-          // Conteúdo principal
           Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Cabeçalho
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              widget.isEditing ? 'Editar Resgate' : 'Resgates',
-                              style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF333333),
-                              ),
-                            ),
-                            Text(
-                              widget.isEditing ? 'Atualize os dados do resgate' : 'Cadastrar um resgate',
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Color(0xFF6B7280),
-                              ),
-                            ),
-                          ],
-                        ),
-                        // Perfil do usuário
-                        Row(
-                          children: [
-                            const CircleAvatar(
-                              radius: 20,
-                              backgroundImage: NetworkImage(
-                                'https://randomuser.me/api/portraits/men/1.jpg',
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'Andrew D.',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                  'admin@gmail.com',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 32),
-                    
-                    // Formulário
-                    Form(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                HeaderWidget(
+                  title: widget.title,
+                  subtitle:
+                      widget.isEditing
+                          ? 'Atualize os dados do resgate'
+                          : 'Cadastre um novo resgate',
+                ),
+                const SizedBox(height: 24),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(24),
+                    child: Form(
                       key: _formKey,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Nome do Animal
-                          _buildTextField(
-                            label: 'Nome do Animal',
-                            controller: _nomeAnimalController,
-                            hintText: 'Digite o nome do animal',
+                          // Informações do Animal
+                          const Text(
+                            'Informações do Animal',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF333333),
+                            ),
                           ),
                           const SizedBox(height: 16),
-                          
-                          // Espécie
-                          _buildDropdown(
-                            label: 'Selecione a espécie',
-                            value: _especie,
-                            items: ['Cachorro', 'Gato', 'Ave', 'Outro'],
-                            onChanged: (value) {
-                              setState(() {
-                                _especie = value ?? '';
-                              });
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                          
-                          // Idade
                           Row(
                             children: [
                               Expanded(
-                                child: _buildTextField(
-                                  label: 'Idade',
-                                  controller: _idadeController,
-                                  hintText: 'Ex: 2',
-                                  keyboardType: TextInputType.number,
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Container(
-                                  padding: const EdgeInsets.only(top: 22),
-                                  child: DropdownButtonFormField<String>(
-                                    decoration: InputDecoration(
-                                      filled: true,
-                                      fillColor: const Color(0xFFF9FAFB),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                        borderSide: BorderSide.none,
-                                      ),
-                                      contentPadding: const EdgeInsets.symmetric(
-                                        horizontal: 16,
-                                        vertical: 12,
-                                      ),
-                                    ),
-                                    value: 'Unidade',
-                                    items: const [
-                                      DropdownMenuItem(
-                                        value: 'Unidade',
-                                        child: Text('Unidade'),
-                                      ),
-                                      DropdownMenuItem(
-                                        value: 'Meses',
-                                        child: Text('Meses'),
-                                      ),
-                                      DropdownMenuItem(
-                                        value: 'Anos',
-                                        child: Text('Anos'),
-                                      ),
-                                    ],
-                                    onChanged: (value) {},
+                                child: TextFormField(
+                                  controller: _animalNameController,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Nome do Animal',
+                                    border: OutlineInputBorder(),
                                   ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          
-                          // Sexo
-                          _buildDropdown(
-                            label: 'Selecione o sexo',
-                            value: _sexo,
-                            items: ['Macho', 'Fêmea'],
-                            onChanged: (value) {
-                              setState(() {
-                                _sexo = value ?? '';
-                              });
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                          
-                          // Descrição
-                          _buildTextField(
-                            label: 'Descrição',
-                            controller: _descricaoController,
-                            hintText: 'Descreva as características do animal',
-                            maxLines: 4,
-                          ),
-                          const SizedBox(height: 32),
-                          
-                          // Local do Resgate
-                          _buildTextField(
-                            label: 'Local do Resgate',
-                            controller: _enderecoController,
-                            hintText: 'Digite o endereço',
-                          ),
-                          const SizedBox(height: 16),
-                          
-                          // Data e Hora
-                          Row(
-                            children: [
-                              Expanded(
-                                child: _buildTextField(
-                                  label: 'Data',
-                                  controller: _dataController,
-                                  hintText: 'DD/MM/AAAA',
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: _buildTextField(
-                                  label: 'Hora',
-                                  controller: _horaController,
-                                  hintText: 'HH:MM',
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          
-                          // Condição do animal
-                          _buildDropdown(
-                            label: 'Condição do animal',
-                            value: _condicaoAnimal,
-                            items: ['Saudável', 'Ferido', 'Doente', 'Crítico'],
-                            onChanged: (value) {
-                              setState(() {
-                                _condicaoAnimal = value ?? '';
-                              });
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                          
-                          // Observações
-                          _buildTextField(
-                            label: 'Observações',
-                            controller: _observacoesController,
-                            hintText: 'Informações adicionais sobre o resgate',
-                            maxLines: 4,
-                          ),
-                          const SizedBox(height: 32),
-                          
-                          // Upload de fotos
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Fotos',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0xFF374151),
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Container(
-                                width: double.infinity,
-                                height: 120,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFF9FAFB),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: InkWell(
-                                  onTap: () {
-                                    // Implementar upload de fotos
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Por favor, insira o nome do animal';
+                                    }
+                                    return null;
                                   },
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.add_photo_alternate,
-                                        size: 40,
-                                        color: Colors.grey[600],
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        'Toque para adicionar fotos',
-                                        style: TextStyle(
-                                          color: Colors.grey[600],
-                                        ),
-                                      ),
-                                    ],
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: DropdownButtonFormField<String>(
+                                  value: _selectedSpecies,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Espécie',
+                                    border: OutlineInputBorder(),
+                                  ),
+                                  items:
+                                      ['Cachorro', 'Gato', 'Outros'].map((
+                                        String value,
+                                      ) {
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(value),
+                                        );
+                                      }).toList(),
+                                  onChanged: (String? newValue) {
+                                    if (newValue != null) {
+                                      setState(() {
+                                        _selectedSpecies = newValue;
+                                      });
+                                    }
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextFormField(
+                                  controller: _ageController,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Idade',
+                                    border: OutlineInputBorder(),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: DropdownButtonFormField<String>(
+                                  value: _selectedGender,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Sexo',
+                                    border: OutlineInputBorder(),
+                                  ),
+                                  items:
+                                      ['Macho', 'Fêmea'].map((String value) {
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(value),
+                                        );
+                                      }).toList(),
+                                  onChanged: (String? newValue) {
+                                    if (newValue != null) {
+                                      setState(() {
+                                        _selectedGender = newValue;
+                                      });
+                                    }
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _conditionController,
+                            decoration: const InputDecoration(
+                              labelText: 'Condição do Animal',
+                              border: OutlineInputBorder(),
+                            ),
+                            maxLines: 2,
+                          ),
+                          const SizedBox(height: 24),
+
+                          // Informações do Resgate
+                          const Text(
+                            'Informações do Resgate',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF333333),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextFormField(
+                                  controller: _locationController,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Localização',
+                                    border: OutlineInputBorder(),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Por favor, insira a localização';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () => _selectDate(context),
+                                  child: InputDecorator(
+                                    decoration: const InputDecoration(
+                                      labelText: 'Data do Resgate',
+                                      border: OutlineInputBorder(),
+                                    ),
+                                    child: Text(
+                                      '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
+                                    ),
                                   ),
                                 ),
                               ),
                             ],
                           ),
+                          const SizedBox(height: 16),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextFormField(
+                                  controller: _responsibleController,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Responsável',
+                                    border: OutlineInputBorder(),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: TextFormField(
+                                  controller: _contactController,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Contato',
+                                    border: OutlineInputBorder(),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _notesController,
+                            decoration: const InputDecoration(
+                              labelText: 'Observações',
+                              border: OutlineInputBorder(),
+                            ),
+                            maxLines: 3,
+                          ),
+                          const SizedBox(height: 16),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: DropdownButtonFormField<String>(
+                                  value: _selectedStatus,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Status',
+                                    border: OutlineInputBorder(),
+                                  ),
+                                  items:
+                                      RescueModel.getStatusList().map((
+                                        String value,
+                                      ) {
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(value),
+                                        );
+                                      }).toList(),
+                                  onChanged: (String? newValue) {
+                                    if (newValue != null) {
+                                      setState(() {
+                                        _selectedStatus = newValue;
+                                      });
+                                    }
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: CheckboxListTile(
+                                  title: const Text('Origem: Denúncia'),
+                                  value: _isFromComplaint,
+                                  onChanged: (bool? value) {
+                                    if (value != null) {
+                                      setState(() {
+                                        _isFromComplaint = value;
+                                      });
+                                    }
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
                           const SizedBox(height: 32),
-                          
-                          // Botões de ação
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: const Text(
-                                  'Cancelar',
-                                  style: TextStyle(
-                                    color: Color(0xFF6B7280),
-                                  ),
-                                ),
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text('Cancelar'),
                               ),
                               const SizedBox(width: 16),
                               ElevatedButton(
                                 onPressed: _salvarResgate,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: const Color(0xFF00A3D7),
+                                  foregroundColor: Colors.white,
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 24,
                                     vertical: 12,
                                   ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
                                 ),
-                                child: const Text(
-                                  'Salvar',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
+                                child: const Text('Salvar'),
                               ),
                             ],
                           ),
                         ],
                       ),
                     ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ],

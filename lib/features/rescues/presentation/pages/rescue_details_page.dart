@@ -7,10 +7,7 @@ import 'package:myapp/features/rescues/presentation/pages/rescue_update_page.dar
 class RescueDetailsPage extends StatelessWidget {
   final RescueModel rescue;
 
-  const RescueDetailsPage({
-    Key? key,
-    required this.rescue,
-  }) : super(key: key);
+  const RescueDetailsPage({Key? key, required this.rescue}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +69,7 @@ class RescueDetailsPage extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 32),
-                    
+
                     // Status do resgate
                     Row(
                       children: [
@@ -85,7 +82,10 @@ class RescueDetailsPage extends StatelessWidget {
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
                           decoration: BoxDecoration(
                             color: RescueModel.getStatusColor(rescue.status),
                             borderRadius: BorderRadius.circular(16),
@@ -99,12 +99,12 @@ class RescueDetailsPage extends StatelessWidget {
                           ),
                         ),
                         const Spacer(),
-                        
+
                         // Botões de ação baseados no status
                         Row(
                           children: [
                             // Botão para atualizar status
-                            if (rescue.status != RescueModel.STATUS_RESGATADO && 
+                            if (rescue.status != RescueModel.STATUS_RESGATADO &&
                                 rescue.status != RescueModel.STATUS_CANCELADO)
                               OutlinedButton.icon(
                                 onPressed: () {
@@ -112,7 +112,9 @@ class RescueDetailsPage extends StatelessWidget {
                                 },
                                 style: OutlinedButton.styleFrom(
                                   foregroundColor: const Color(0xFF00A3D7),
-                                  side: const BorderSide(color: Color(0xFF00A3D7)),
+                                  side: const BorderSide(
+                                    color: Color(0xFF00A3D7),
+                                  ),
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 16,
                                     vertical: 12,
@@ -121,9 +123,9 @@ class RescueDetailsPage extends StatelessWidget {
                                 icon: const Icon(Icons.edit),
                                 label: const Text('Atualizar Status'),
                               ),
-                            
+
                             const SizedBox(width: 12),
-                            
+
                             // Botão para cadastrar animal se o status for "Resgatado"
                             if (rescue.status == RescueModel.STATUS_RESGATADO)
                               ElevatedButton.icon(
@@ -137,7 +139,10 @@ class RescueDetailsPage extends StatelessWidget {
                                     vertical: 12,
                                   ),
                                 ),
-                                icon: const Icon(Icons.pets, color: Colors.white),
+                                icon: const Icon(
+                                  Icons.pets,
+                                  color: Colors.white,
+                                ),
                                 label: const Text(
                                   'Cadastrar Animal',
                                   style: TextStyle(color: Colors.white),
@@ -148,7 +153,7 @@ class RescueDetailsPage extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 24),
-                    
+
                     // Informações do resgate
                     Container(
                       padding: const EdgeInsets.all(24),
@@ -175,14 +180,29 @@ class RescueDetailsPage extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          
+
                           // Dados do animal
-                          _buildInfoRow('Nome do Animal', rescue.nomeAnimal ?? 'Não identificado'),
-                          _buildInfoRow('Espécie', rescue.especie ?? 'Não especificado'),
-                          _buildInfoRow('Idade', rescue.idade ?? 'Não especificada'),
-                          _buildInfoRow('Sexo', rescue.sexo ?? 'Não especificado'),
-                          _buildInfoRow('Condição', rescue.condicaoAnimal ?? 'Não especificada'),
-                          
+                          _buildInfoRow(
+                            'Nome do Animal',
+                            rescue.nomeAnimal ?? 'Não identificado',
+                          ),
+                          _buildInfoRow(
+                            'Espécie',
+                            rescue.especie ?? 'Não especificado',
+                          ),
+                          _buildInfoRow(
+                            'Idade',
+                            rescue.idade ?? 'Não especificada',
+                          ),
+                          _buildInfoRow(
+                            'Sexo',
+                            rescue.sexo ?? 'Não especificado',
+                          ),
+                          _buildInfoRow(
+                            'Condição',
+                            rescue.condicaoAnimal ?? 'Não especificada',
+                          ),
+
                           const SizedBox(height: 24),
                           const Text(
                             'Informações do Resgate',
@@ -193,19 +213,36 @@ class RescueDetailsPage extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          
+
                           // Dados do resgate
-                          _buildInfoRow('Localização', rescue.localizacao ?? 'Não especificada'),
-                          _buildInfoRow('Data do Resgate', rescue.dataResgate ?? 'Não especificada'),
-                          _buildInfoRow('Responsável', rescue.responsavel ?? 'Não especificado'),
-                          _buildInfoRow('Contato', rescue.contato ?? 'Não especificado'),
-                          
+                          _buildInfoRow(
+                            'Localização',
+                            rescue.localizacao ?? 'Não especificada',
+                          ),
+                          _buildInfoRow(
+                            'Data do Resgate',
+                            rescue.dataResgate ?? 'Não especificada',
+                          ),
+                          _buildInfoRow(
+                            'Responsável',
+                            rescue.responsavel ?? 'Não especificado',
+                          ),
+                          _buildInfoRow(
+                            'Contato',
+                            rescue.contato ?? 'Não especificado',
+                          ),
+
                           // Origem da denúncia
                           if (rescue.origemDenuncia == true)
-                            _buildInfoRow('Origem', 'Denúncia', isHighlighted: true),
-                          
+                            _buildInfoRow(
+                              'Origem',
+                              'Denúncia',
+                              isHighlighted: true,
+                            ),
+
                           // Observações
-                          if (rescue.observacoes != null && rescue.observacoes!.isNotEmpty) ...[
+                          if (rescue.observacoes != null &&
+                              rescue.observacoes!.isNotEmpty) ...[
                             const SizedBox(height: 16),
                             const Text(
                               'Observações',
@@ -235,9 +272,10 @@ class RescueDetailsPage extends StatelessWidget {
                         ],
                       ),
                     ),
-                    
+
                     // Imagem do animal (se disponível)
-                    if (rescue.imagemUrl != null && rescue.imagemUrl!.isNotEmpty) ...[
+                    if (rescue.imagemUrl != null &&
+                        rescue.imagemUrl!.isNotEmpty) ...[
                       const SizedBox(height: 24),
                       const Text(
                         'Imagem do Animal',
@@ -294,9 +332,9 @@ class RescueDetailsPage extends StatelessWidget {
                         ),
                       ),
                     ],
-                    
+
                     const SizedBox(height: 32),
-                    
+
                     // Histórico de atualizações (mockup)
                     const Text(
                       'Histórico de Atualizações',
@@ -328,9 +366,13 @@ class RescueDetailsPage extends StatelessWidget {
       ),
     );
   }
-  
+
   // Método para construir uma linha de informação
-  Widget _buildInfoRow(String label, String value, {bool isHighlighted = false}) {
+  Widget _buildInfoRow(
+    String label,
+    String value, {
+    bool isHighlighted = false,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
@@ -353,7 +395,10 @@ class RescueDetailsPage extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: isHighlighted ? FontWeight.w600 : FontWeight.normal,
-                color: isHighlighted ? const Color(0xFF00A3D7) : const Color(0xFF111827),
+                color:
+                    isHighlighted
+                        ? const Color(0xFF00A3D7)
+                        : const Color(0xFF111827),
               ),
             ),
           ),
@@ -361,9 +406,14 @@ class RescueDetailsPage extends StatelessWidget {
       ),
     );
   }
-  
+
   // Método para construir um item da linha do tempo
-  Widget _buildTimelineItem(String title, String subtitle, String date, {bool isFirst = false}) {
+  Widget _buildTimelineItem(
+    String title,
+    String subtitle,
+    String date, {
+    bool isFirst = false,
+  }) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -375,18 +425,11 @@ class RescueDetailsPage extends StatelessWidget {
               decoration: BoxDecoration(
                 color: const Color(0xFF00A3D7),
                 shape: BoxShape.circle,
-                border: Border.all(
-                  color: Colors.white,
-                  width: 2,
-                ),
+                border: Border.all(color: Colors.white, width: 2),
               ),
             ),
             if (!isFirst)
-              Container(
-                width: 2,
-                height: 50,
-                color: const Color(0xFFE5E7EB),
-              ),
+              Container(width: 2, height: 50, color: const Color(0xFFE5E7EB)),
           ],
         ),
         const SizedBox(width: 12),
@@ -405,18 +448,12 @@ class RescueDetailsPage extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 subtitle,
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Color(0xFF6B7280),
-                ),
+                style: const TextStyle(fontSize: 14, color: Color(0xFF6B7280)),
               ),
               const SizedBox(height: 4),
               Text(
                 date,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Color(0xFF9CA3AF),
-                ),
+                style: const TextStyle(fontSize: 12, color: Color(0xFF9CA3AF)),
               ),
               const SizedBox(height: 16),
             ],
@@ -425,30 +462,31 @@ class RescueDetailsPage extends StatelessWidget {
       ],
     );
   }
-  
+
   // Método para navegar para a tela de cadastro de animal
   void _cadastrarAnimal(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => AnimalFormPage(
-          resgate: rescue,
-        ),
-      ),
+      MaterialPageRoute(builder: (context) => AnimalFormPage(resgate: rescue)),
     );
   }
-  
+
   // Método para navegar para a tela de atualização de resgate
   void _atualizarResgate(BuildContext context) async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RescueUpdatePage(
-          rescue: rescue, onUpdate: (RescueModel ) {  },
-        ),
+        builder:
+            (context) => RescueUpdatePage(
+              rescue: rescue,
+              onUpdate: (updatedRescue) {
+                // Atualizar o resgate na lista e retornar para a tela anterior
+                Navigator.pop(context, updatedRescue);
+              },
+            ),
       ),
     );
-    
+
     if (result != null && result is RescueModel) {
       // Retornar para a tela anterior com o resgate atualizado
       Navigator.pop(context, result);

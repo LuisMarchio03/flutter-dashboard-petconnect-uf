@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/features/animals/domain/models/animal_model.dart';
 import 'package:myapp/features/rescues/domain/models/rescue_model.dart';
 import '../../features/dashboard/presentation/pages/dashboard_page.dart';
 import '../../features/complaints/presentation/pages/complaints_page.dart';
 import '../../features/complaints/presentation/pages/complaint_form_page.dart';
 import '../../features/animals/presentation/pages/animals_page.dart';
 import '../../features/animals/presentation/pages/animal_form_page.dart';
+import '../../features/animals/presentation/pages/animal_details_page.dart';
+import '../../features/animals/presentation/pages/adoption_form_page.dart';
+import '../../features/animals/presentation/pages/sponsorship_form_page.dart';
 import '../../features/rescues/presentation/pages/rescues_page.dart';
 import '../../features/rescues/presentation/pages/rescue_form_page.dart';
 import '../../features/users/presentation/pages/users_page.dart';
@@ -17,6 +21,9 @@ class AppRoutes {
   static const String complaintForm = '/denuncias/formulario';
   static const String animals = '/animais';
   static const String animalForm = '/animais/formulario';
+  static const String animalDetails = '/animais/detalhes';
+  static const String adoptionForm = '/animais/adocao';
+  static const String sponsorshipForm = '/animais/apadrinhamento';
   static const String rescues = '/resgates';
   static const String rescueForm = '/resgates/formulario';
   static const String users = '/usuarios';
@@ -28,30 +35,46 @@ class AppRoutes {
     complaints: (context) => const ComplaintsPage(),
     complaintForm: (context) => ComplaintFormPage(),
     animals: (context) => const AnimalsPage(),
-    animalForm: (context) => AnimalFormPage(resgate: RescueModel(status: 'pending')),
+    animalForm:
+        (context) => AnimalFormPage(resgate: RescueModel(status: 'pending')),
+    animalDetails:
+        (context) => AnimalDetailsPage(
+          animal: AnimalModel(
+            nome: '',
+            genero: '',
+            raca: '',
+            cor: '',
+            status: '',
+          ),
+        ),
+    adoptionForm:
+        (context) => AdoptionFormPage(
+          animal: AnimalModel(
+            nome: '',
+            genero: '',
+            raca: '',
+            cor: '',
+            status: '',
+          ),
+        ),
+    sponsorshipForm:
+        (context) => SponsorshipFormPage(
+          animal: AnimalModel(
+            nome: '',
+            genero: '',
+            raca: '',
+            cor: '',
+            status: '',
+          ),
+        ),
     rescues: (context) => const RescuesPage(),
-    rescueForm: (context) => RescueFormPage(),
+    rescueForm: (context) => RescueFormPage(title: 'Registrar Resgate'),
     users: (context) => const UsersPage(),
     userForm: (context) => UserFormPage(),
   };
 
-  // Função para navegar para uma rota com argumentos
-  static Future<T?> navigateTo<T>(BuildContext context, String routeName, {Object? arguments}) {
-    return Navigator.pushNamed<T>(context, routeName, arguments: arguments);
-  }
-
-  // Função para substituir a rota atual
-  static Future<T?> replaceWith<T>(BuildContext context, String routeName, {Object? arguments}) {
-    return Navigator.pushReplacementNamed<T, dynamic>(context, routeName, arguments: arguments);
-  }
-
-  // Função para navegar para uma rota e remover todas as anteriores
-  static Future<T?> navigateAndRemoveUntil<T>(BuildContext context, String routeName, {Object? arguments}) {
-    return Navigator.pushNamedAndRemoveUntil<T>(
-      context, 
-      routeName, 
-      (Route<dynamic> route) => false,
-      arguments: arguments
-    );
+  // Método para navegação com retorno de dados
+  static Future<T?> navigateTo<T>(BuildContext context, String routeName) {
+    return Navigator.pushNamed(context, routeName);
   }
 }
