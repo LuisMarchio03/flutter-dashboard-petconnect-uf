@@ -96,7 +96,7 @@ class _SponsorshipFormPageState extends State<SponsorshipFormPage> {
   Widget _buildAnimalInfo() {
     return FormSectionWidget(
       title: 'Informações do Animal',
-      icon: '🐾',
+      icon: '',
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -155,7 +155,7 @@ class _SponsorshipFormPageState extends State<SponsorshipFormPage> {
   Widget _buildSponsorInfo() {
     return FormSectionWidget(
       title: 'Informações do Padrinho',
-      icon: '👤',
+      icon: '',
       child: Column(
         children: [
           CustomTextField(
@@ -212,7 +212,7 @@ class _SponsorshipFormPageState extends State<SponsorshipFormPage> {
   Widget _buildSponsorshipInfo() {
     return FormSectionWidget(
       title: 'Informações do Apadrinhamento',
-      icon: '💝',
+      icon: '',
       child: Column(
         children: [
           DropdownButtonFormField<String>(

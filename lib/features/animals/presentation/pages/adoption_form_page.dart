@@ -87,7 +87,7 @@ class _AdoptionFormPageState extends State<AdoptionFormPage> {
   Widget _buildAnimalInfo() {
     return FormSectionWidget(
       title: 'Informações do Animal',
-      icon: '🐾',
+      icon: '',
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -146,7 +146,7 @@ class _AdoptionFormPageState extends State<AdoptionFormPage> {
   Widget _buildAdopterInfo() {
     return FormSectionWidget(
       title: 'Informações do Adotante',
-      icon: '👤',
+      icon: '',
       child: Column(
         children: [
           CustomTextField(
@@ -217,7 +217,7 @@ class _AdoptionFormPageState extends State<AdoptionFormPage> {
   Widget _buildAdoptionInfo() {
     return FormSectionWidget(
       title: 'Informações da Adoção',
-      icon: '📝',
+      icon: '',
       child: Column(
         children: [
           DatePickerField(

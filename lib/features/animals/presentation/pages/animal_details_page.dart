@@ -74,46 +74,93 @@ class _AnimalDetailsPageState extends State<AnimalDetailsPage> {
           ),
         ],
       ),
-      child: Row(
+      child: Column(
         children: [
-          // Avatar do animal
-          Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              color: const Color(0xFF00A3D7).withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(Icons.pets, size: 60, color: Color(0xFF00A3D7)),
-          ),
-          const SizedBox(width: 24),
-          // Informações principais
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.animal.nome,
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1F2937),
-                  ),
+          Row(
+            children: [
+              // Avatar do animal
+              Container(
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF00A3D7).withOpacity(0.1),
+                  shape: BoxShape.circle,
                 ),
-                const SizedBox(height: 8),
-                _buildStatusBadge(widget.animal.status),
-                const SizedBox(height: 16),
-                Row(
+                child: const Icon(
+                  Icons.pets,
+                  size: 60,
+                  color: Color(0xFF00A3D7),
+                ),
+              ),
+              const SizedBox(width: 24),
+              // Informações principais
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildInfoChip('🐕 ${widget.animal.especie}'),
-                    const SizedBox(width: 12),
-                    _buildInfoChip('🎨 ${widget.animal.cor}'),
-                    const SizedBox(width: 12),
-                    _buildInfoChip('⚖️ ${widget.animal.porte}'),
+                    Text(
+                      widget.animal.nome,
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF1F2937),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    _buildStatusBadge(widget.animal.status),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        _buildInfoChip('🐕 ${widget.animal.especie}'),
+                        const SizedBox(width: 12),
+                        _buildInfoChip('🎨 ${widget.animal.cor}'),
+                        const SizedBox(width: 12),
+                        _buildInfoChip('⚖️ ${widget.animal.porte}'),
+                      ],
+                    ),
                   ],
                 ),
-              ],
-            ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              OutlinedButton.icon(
+                onPressed: _abrirFormularioApadrinhamento,
+                icon: const Icon(Icons.favorite_border),
+                label: const Text('Apadrinhar'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: const Color(0xFFF43F5E),
+                  side: const BorderSide(color: Color(0xFFF43F5E)),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              ElevatedButton.icon(
+                onPressed: _abrirFormularioAdocao,
+                icon: const Icon(Icons.pets),
+                label: const Text('Adotar'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF00A3D7),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
