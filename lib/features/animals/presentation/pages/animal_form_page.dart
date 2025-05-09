@@ -420,21 +420,21 @@ class _AnimalFormPageState extends State<AnimalFormPage> {
     );
   }
 
-  Widget _buildMenuItem(IconData icon, String text, bool isSelected) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      decoration: BoxDecoration(
-        color: isSelected ? Colors.white.withOpacity(0.2) : Colors.transparent,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: ListTile(
-        leading: Icon(icon, color: Colors.white),
-        title: Text(text, style: const TextStyle(color: Colors.white)),
-        onTap: () {},
-        dense: true,
-      ),
-    );
-  }
+  // Widget _buildMenuItem(IconData icon, String text, bool isSelected) {
+  //   return Container(
+  //     margin: const EdgeInsets.only(bottom: 8),
+  //     decoration: BoxDecoration(
+  //       color: isSelected ? Colors.white.withOpacity(0.2) : Colors.transparent,
+  //       borderRadius: BorderRadius.circular(8),
+  //     ),
+  //     child: ListTile(
+  //       leading: Icon(icon, color: Colors.white),
+  //       title: Text(text, style: const TextStyle(color: Colors.white)),
+  //       onTap: () {},
+  //       dense: true,
+  //     ),
+  //   );
+  // }
 
   Widget _buildTextField({
     required String label,

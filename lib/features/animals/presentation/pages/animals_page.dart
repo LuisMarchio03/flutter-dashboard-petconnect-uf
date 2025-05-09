@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/core/routes/app_routes.dart';
 import 'package:myapp/core/widgets/confirm_delete_dialog.dart';
+import 'package:myapp/core/widgets/data_table_widget.dart';
 import 'package:myapp/core/widgets/sidebar_menu.dart';
+import 'package:myapp/core/widgets/status_badge_widget.dart';
 import 'package:myapp/features/animals/presentation/pages/animal_form_page.dart';
 import 'package:myapp/features/rescues/domain/models/rescue_model.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../domain/models/animal_model.dart';
-import '../widgets/animal_list_item.dart';
 import '../widgets/search_bar_widget.dart';
 
 class AnimalsPage extends StatefulWidget {
@@ -150,70 +151,116 @@ class _AnimalsPageState extends State<AnimalsPage> {
                   ),
                   const SizedBox(height: 24),
                   // Tabela de animais
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[100],
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Column(
-                        children: [
-                          // Cabeçalho da tabela
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  flex: 2,
-                                  child: _buildTableHeader('Nome'),
-                                ),
-                                Expanded(
-                                  flex: 2,
-                                  child: _buildTableHeader('Gênero'),
-                                ),
-                                Expanded(
-                                  flex: 2,
-                                  child: _buildTableHeader('Raça'),
-                                ),
-                                Expanded(
-                                  flex: 2,
-                                  child: _buildTableHeader('Status'),
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: _buildTableHeader('Ações'),
-                                ),
-                              ],
-                            ),
-                          ),
-                          // Lista de animais
-                          // Na parte do ListView.builder
-                          Expanded(
-                            child: ListView.builder(
-                              itemCount: animais.length,
-                              itemBuilder: (context, index) {
-                                return AnimalListItem(
-                                  animal: animais[index],
-                                  onEdit:
-                                      (animal) => _editarAnimal(animal, index),
-                                  onDelete: () {
-                                    _confirmarExclusao(context, () {
-                                      setState(() {
-                                        animais.removeAt(index);
-                                      });
-                                    });
-                                  },
-                                );
+                  DataTableWidget(
+                    columns: const ['Nome', 'Gênero', 'Raça', 'Status'],
+                    rows:
+                        animais
+                            .map(
+                              (animal) => {
+                                'nome': animal.nome,
+                                'genero': animal.genero,
+                                'raca': animal.raca,
+                                'status': animal.status,
                               },
-                            ),
-                          ),
-                        ],
+                            )
+                            .toList(),
+                    customCellBuilders: {
+                      'status': (value) => StatusBadgeWidget(
+                        status: value.toString(),
+                        statusColors: {
+                          'Disponível': const Color(0xFF10B981), // Verde
+                          'Adotado': const Color(0xFF3B82F6), // Azul
+                          'Em tratamento': const Color(0xFFEAB308), // Amarelo
+                        },
                       ),
-                    ),
+                    },
+                    actions: [
+                      DataTableAction(
+                        icon: Icons.edit,
+                        color: Colors.blue,
+                        tooltip: 'Editar',
+                        onPressed: (index) {
+                          _editarAnimal(animais[index], index);
+                        },
+                      ),
+                      DataTableAction(
+                        icon: Icons.delete,
+                        color: Colors.red,
+                        tooltip: 'Excluir',
+                        onPressed: (index) {
+                          _confirmarExclusao(context, () {
+                            setState(() {
+                              animais.removeAt(index);
+                            });
+                          });
+                        },
+                      ),
+                    ],
                   ),
+                  //   Expanded(
+                  //     child: Container(
+                  //       decoration: BoxDecoration(
+                  //         color: Colors.grey[100],
+                  //         borderRadius: BorderRadius.circular(8),
+                  //       ),
+                  //       child: Column(
+                  //         children: [
+                  //           // Cabeçalho da tabela
+                  //           Padding(
+                  //             padding: const EdgeInsets.symmetric(
+                  //               horizontal: 16,
+                  //               vertical: 12,
+                  //             ),
+                  //             child: Row(
+                  //               children: [
+                  //                 Expanded(
+                  //                   flex: 2,
+                  //                   child: _buildTableHeader('Nome'),
+                  //                 ),
+                  //                 Expanded(
+                  //                   flex: 2,
+                  //                   child: _buildTableHeader('Gênero'),
+                  //                 ),
+                  //                 Expanded(
+                  //                   flex: 2,
+                  //                   child: _buildTableHeader('Raça'),
+                  //                 ),
+                  //                 Expanded(
+                  //                   flex: 2,
+                  //                   child: _buildTableHeader('Status'),
+                  //                 ),
+                  //                 Expanded(
+                  //                   flex: 1,
+                  //                   child: _buildTableHeader('Ações'),
+                  //                 ),
+                  //               ],
+                  //             ),
+                  //           ),
+                  //           // Lista de animais
+                  //           // Na parte do ListView.builder
+                  //           Expanded(
+                  //             child: ListView.builder(
+                  //               itemCount: animais.length,
+                  //               itemBuilder: (context, index) {
+                  //                 return AnimalListItem(
+                  //                   animal: animais[index],
+                  //                   onEdit:
+                  //                       (animal) => _editarAnimal(animal, index),
+                  //                   onDelete: () {
+                  //                     _confirmarExclusao(context, () {
+                  //                       setState(() {
+                  //                         animais.removeAt(index);
+                  //                       });
+                  //                     });
+                  //                   },
+                  //                 );
+                  //               },
+                  //             ),
+                  //           ),
+                  //         ],
+                  //       ),
+                  //     ),
+                  //   ),
                 ],
               ),
             ),
@@ -223,31 +270,31 @@ class _AnimalsPageState extends State<AnimalsPage> {
     );
   }
 
-  Widget _buildMenuItem(IconData icon, String text, bool isSelected) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      decoration: BoxDecoration(
-        color: isSelected ? Colors.white.withOpacity(0.2) : Colors.transparent,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: ListTile(
-        leading: Icon(icon, color: Colors.white),
-        title: Text(text, style: const TextStyle(color: Colors.white)),
-        onTap: () {},
-        dense: true,
-      ),
-    );
-  }
+  // Widget _buildMenuItem(IconData icon, String text, bool isSelected) {
+  //   return Container(
+  //     margin: const EdgeInsets.only(bottom: 8),
+  //     decoration: BoxDecoration(
+  //       color: isSelected ? Colors.white.withOpacity(0.2) : Colors.transparent,
+  //       borderRadius: BorderRadius.circular(8),
+  //     ),
+  //     child: ListTile(
+  //       leading: Icon(icon, color: Colors.white),
+  //       title: Text(text, style: const TextStyle(color: Colors.white)),
+  //       onTap: () {},
+  //       dense: true,
+  //     ),
+  //   );
+  // }
 
-  Widget _buildTableHeader(String text) {
-    return Text(
-      text,
-      style: const TextStyle(
-        fontWeight: FontWeight.bold,
-        color: AppColors.textPrimary,
-      ),
-    );
-  }
+  // Widget _buildTableHeader(String text) {
+  //   return Text(
+  //     text,
+  //     style: const TextStyle(
+  //       fontWeight: FontWeight.bold,
+  //       color: AppColors.textPrimary,
+  //     ),
+  //   );
+  // }
 
   // Método para adicionar um novo animal
   void _adicionarNovoAnimal() async {
@@ -268,9 +315,13 @@ class _AnimalsPageState extends State<AnimalsPage> {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => AnimalFormPage(animal: animal, isEditing: true, resgate: RescueModel(status: 'pending')
+        builder:
+            (context) => AnimalFormPage(
+              animal: animal,
+              isEditing: true,
+              resgate: RescueModel(status: 'pending'),
+            ),
       ),
-    ),
     );
 
     if (result != null && result is AnimalModel) {

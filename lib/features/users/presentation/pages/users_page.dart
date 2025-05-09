@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/core/routes/app_routes.dart';
 import 'package:myapp/core/widgets/confirm_delete_dialog.dart';
+import 'package:myapp/core/widgets/data_table_widget.dart';
 import 'package:myapp/core/widgets/sidebar_menu.dart';
+import 'package:myapp/core/widgets/status_badge_widget.dart';
 import 'package:myapp/features/users/domain/models/user_form_model.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../domain/models/user_model.dart';
-import '../widgets/user_list_item.dart';
 import '../widgets/search_bar_widget.dart';
 
 class UsersPage extends StatefulWidget {
@@ -54,16 +54,16 @@ class _UsersPageState extends State<UsersPage> {
     super.dispose();
   }
 
-  Widget _buildTableHeader(String title) {
-    return Text(
-      title,
-      style: const TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.bold,
-        color: Color(0xFF6B7280),
-      ),
-    );
-  }
+  // Widget _buildTableHeader(String title) {
+  //   return Text(
+  //     title,
+  //     style: const TextStyle(
+  //       fontSize: 14,
+  //       fontWeight: FontWeight.bold,
+  //       color: Color(0xFF6B7280),
+  //     ),
+  //   );
+  // }
 
   void _adicionarNovoUsuario() async {
     final result = await AppRoutes.navigateTo<UserFormModel>(
@@ -211,151 +211,49 @@ class _UsersPageState extends State<UsersPage> {
                 // Tabela de usuários
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          // Cabeçalho da tabela
-                          Container(
-                            decoration: const BoxDecoration(
-                              color: Color(0xFFF9FAFB),
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(8),
-                                topRight: Radius.circular(8),
-                              ),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  flex: 2,
-                                  child: _buildTableHeader('Nome'),
-                                ),
-                                Expanded(
-                                  flex: 2,
-                                  child: _buildTableHeader('Email'),
-                                ),
-                                Expanded(
-                                  flex: 2,
-                                  child: _buildTableHeader('Perfil'),
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: _buildTableHeader('Ações'),
-                                ),
-                              ],
-                            ),
-                          ),
-                          // Lista de usuários
-                          Expanded(
-                            child: ListView.builder(
-                              itemCount: usuarios.length,
-                              itemBuilder: (context, index) {
-                                final user = usuarios[index];
-                                return UserListItem(
-                                  user: user,
-                                  onEdit: () {
-                                    _editarUsuario(user);
-                                  },
-                                  onDelete: () {
-                                    _confirmarExclusao(context, () {
-                                      setState(() {
-                                        usuarios.removeAt(index);
-                                      });
-                                    });
-                                  },
-                                );
-                              },
-                            ),
-                          ),
-                          // Paginação
-                          Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Row(
-                              children: [
-                                Text(
-                                  'Mostrando ${usuarios.length} de 25 usuários',
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    color: Color(0xFF6B7280),
-                                  ),
-                                ),
-                                const Spacer(),
-                                TextButton(
-                                  onPressed: () {},
-                                  child: const Text(
-                                    'Anterior',
-                                    style: TextStyle(color: Color(0xFF6B7280)),
-                                  ),
-                                ),
-                                Container(
-                                  width: 32,
-                                  height: 32,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF00A3D7),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: const Text(
-                                    '1',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  width: 32,
-                                  height: 32,
-                                  decoration: BoxDecoration(
-                                    color: Colors.transparent,
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: const Text(
-                                    '2',
-                                    style: TextStyle(color: Color(0xFF6B7280)),
-                                  ),
-                                ),
-                                Container(
-                                  width: 32,
-                                  height: 32,
-                                  decoration: BoxDecoration(
-                                    color: Colors.transparent,
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: const Text(
-                                    '3',
-                                    style: TextStyle(color: Color(0xFF6B7280)),
-                                  ),
-                                ),
-                                TextButton(
-                                  onPressed: () {},
-                                  child: const Text(
-                                    'Próximo',
-                                    style: TextStyle(color: Color(0xFF6B7280)),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                    padding: const EdgeInsets.all(24),
+                    child: DataTableWidget(
+                      columns: const ['Nome', 'Email', 'Perfil'],
+                      rows: usuarios
+                          .map((usuario) => {
+                                'nome': usuario.nome,
+                                'email': usuario.email,
+                                'perfil': usuario.perfil,
+                              })
+                          .toList(),
+                      customCellBuilders: {
+                        'perfil': (value) => StatusBadgeWidget(
+                          status: value.toString(),
+                          statusColors: {
+                            'Administrador': const Color(0xFFEF4444), // Vermelho
+                            'Veterinário': const Color(0xFF3B82F6), // Azul
+                            'Cuidador': const Color(0xFF10B981), // Verde
+                            'Voluntário': const Color(0xFF8B5CF6), // Roxo
+                          },
+                        ),
+                      },
+                      actions: [
+                        DataTableAction(
+                          icon: Icons.edit,
+                          color: Colors.blue,
+                          tooltip: 'Editar',
+                          onPressed: (index) {
+                            _editarUsuario(usuarios[index]);
+                          },
+                        ),
+                        DataTableAction(
+                          icon: Icons.delete,
+                          color: Colors.red,
+                          tooltip: 'Excluir',
+                          onPressed: (index) {
+                            _confirmarExclusao(context, () {
+                              setState(() {
+                                usuarios.removeAt(index);
+                              });
+                            });
+                          },
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -366,29 +264,30 @@ class _UsersPageState extends State<UsersPage> {
       ),
     );
   }
-
-  Widget _buildMenuItem(IconData icon, String title, bool isSelected) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      decoration: BoxDecoration(
-        color: isSelected ? Colors.white.withOpacity(0.1) : Colors.transparent,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: ListTile(
-        leading: Icon(icon, color: Colors.white),
-        title: Text(
-          title,
-          style: const TextStyle(color: Colors.white, fontSize: 14),
-        ),
-        onTap: () {
-          // Implementar navegação
-        },
-        dense: true,
-        visualDensity: const VisualDensity(horizontal: -4, vertical: -2),
-      ),
-    );
-  }
 }
+
+//   Widget _buildMenuItem(IconData icon, String title, bool isSelected) {
+//     return Container(
+//       margin: const EdgeInsets.only(bottom: 8),
+//       decoration: BoxDecoration(
+//         color: isSelected ? Colors.white.withOpacity(0.1) : Colors.transparent,
+//         borderRadius: BorderRadius.circular(8),
+//       ),
+//       child: ListTile(
+//         leading: Icon(icon, color: Colors.white),
+//         title: Text(
+//           title,
+//           style: const TextStyle(color: Colors.white, fontSize: 14),
+//         ),
+//         onTap: () {
+//           // Implementar navegação
+//         },
+//         dense: true,
+//         visualDensity: const VisualDensity(horizontal: -4, vertical: -2),
+//       ),
+//     );
+//   }
+// }
 
 void _confirmarExclusao(BuildContext context, VoidCallback onConfirm) {
   showDialog(
