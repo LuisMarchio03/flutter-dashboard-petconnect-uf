@@ -333,7 +333,44 @@ class ComplaintDetailsPage extends StatelessWidget {
                                                       if (complaint.status == 'Pendente')
                                                         OutlinedButton.icon(
                                                           onPressed: () {
-                                                            // ... existing code ...
+                                                            // Mostrar modal de confirmação antes de atender
+                                                            showDialog(
+                                                              context: context,
+                                                              builder: (BuildContext context) {
+                                                                return AlertDialog(
+                                                                  title: const Text('Confirmar Atendimento'),
+                                                                  content: const Text(
+                                                                    'Tem certeza que deseja atender esta denúncia?',
+                                                                  ),
+                                                                  actions: [
+                                                                    TextButton(
+                                                                      onPressed: () {
+                                                                        Navigator.of(context).pop(); // Fecha o diálogo
+                                                                        
+                                                                        // Retorna para a tela anterior com o status atualizado
+                                                                        Navigator.of(context).pop(
+                                                                          ComplaintModel(
+                                                                            
+                                                                            descricao: complaint.descricao,
+                                                                            endereco: complaint.endereco,
+                                                                            dataReporte: complaint.dataReporte,
+                                                                            status: 'Em Atendimento',
+                                                                            imagemUrl: complaint.imagemUrl,
+                                                                          ),
+                                                                        );
+                                                                      },
+                                                                      child: const Text('Confirmar'),
+                                                                    ),
+                                                                    TextButton(
+                                                                      onPressed: () {
+                                                                        Navigator.of(context).pop(); // Fecha apenas o diálogo
+                                                                      },
+                                                                      child: const Text('Cancelar'),
+                                                                    ),
+                                                                  ],
+                                                                );
+                                                              },
+                                                            );
                                                           },
                                                           icon: const Icon(Icons.check_circle_outline),
                                                           label: const Text('Atender Denúncia'),
@@ -349,45 +386,182 @@ class ComplaintDetailsPage extends StatelessWidget {
                                                           ),
                                                         ),
                                                       
-                                                      // Botão para marcar como atendido (apenas mostrar se estiver em andamento)
-                                                      if (complaint.status == 'Em andamento') ...[
-                                                        ElevatedButton.icon(
-                                                          onPressed: () {
-                                                            // ... existing code ...
-                                                          },
-                                                          icon: const Icon(Icons.task_alt),
-                                                          label: const Text('Finalizar Atendimento'),
-                                                          style: ElevatedButton.styleFrom(
-                                                            backgroundColor: const Color(0xFF00A3D7),
-                                                            foregroundColor: Colors.white,
-                                                            padding: const EdgeInsets.symmetric(
-                                                              vertical: 16,
-                                                            ),
-                                                            shape: RoundedRectangleBorder(
-                                                              borderRadius: BorderRadius.circular(8),
+                                                      // Botão de resolver denúncia (apenas mostrar se estiver em atendimento)
+                                                      if (complaint.status == 'Em Atendimento')
+                                                        Padding(
+                                                          padding: const EdgeInsets.only(top: 16.0),
+                                                          child: ElevatedButton.icon(
+                                                            onPressed: () {
+                                                              // Mostrar modal de confirmação antes de resolver
+                                                              showDialog(
+                                                                context: context,
+                                                                builder: (BuildContext context) {
+                                                                  return AlertDialog(
+                                                                    title: const Text('Confirmar Resolução'),
+                                                                    content: const Text(
+                                                                      'Tem certeza que deseja marcar esta denúncia como resolvida?',
+                                                                    ),
+                                                                    actions: [
+                                                                      TextButton(
+                                                                        onPressed: () {
+                                                                          Navigator.of(context).pop(); // Fecha o diálogo
+                                                                          
+                                                                          // Retorna para a tela anterior com o status atualizado
+                                                                          Navigator.of(context).pop(
+                                                                            ComplaintModel(
+                                                                              
+                                                                              descricao: complaint.descricao,
+                                                                              endereco: complaint.endereco,
+                                                                              dataReporte: complaint.dataReporte,
+                                                                              status: 'Resolvido',
+                                                                              imagemUrl: complaint.imagemUrl,
+                                                                            ),
+                                                                          );
+                                                                        },
+                                                                        child: const Text('Confirmar'),
+                                                                      ),
+                                                                      TextButton(
+                                                                        onPressed: () {
+                                                                          Navigator.of(context).pop(); // Fecha apenas o diálogo
+                                                                        },
+                                                                        child: const Text('Cancelar'),
+                                                                      ),
+                                                                    ],
+                                                                  );
+                                                                },
+                                                              );
+                                                            },
+                                                            icon: const Icon(Icons.task_alt),
+                                                            label: const Text('Resolver Denúncia'),
+                                                            style: ElevatedButton.styleFrom(
+                                                              backgroundColor: const Color(0xFF00A3D7),
+                                                              foregroundColor: Colors.white,
+                                                              padding: const EdgeInsets.symmetric(
+                                                                vertical: 16,
+                                                              ),
+                                                              shape: RoundedRectangleBorder(
+                                                                borderRadius: BorderRadius.circular(8),
+                                                              ),
                                                             ),
                                                           ),
                                                         ),
-                                                        const SizedBox(height: 16),
-                                                      ],
                                                       
-                                                      // Botão para cancelar denúncia (mostrar para pendente e em andamento)
-                                                      if (complaint.status == 'Pendente' ||
-                                                          complaint.status == 'Em andamento')
-                                                        ElevatedButton.icon(
-                                                          onPressed: () {
-                                                            // ... existing code ...
-                                                          },
-                                                          icon: const Icon(Icons.cancel_outlined),
-                                                          label: const Text('Cancelar Denúncia'),
-                                                          style: ElevatedButton.styleFrom(
-                                                            backgroundColor: Colors.red.shade50,
-                                                            foregroundColor: Colors.red,
-                                                            padding: const EdgeInsets.symmetric(
-                                                              vertical: 16,
+                                                      // Botão de reabrir denúncia (apenas mostrar se estiver resolvida)
+                                                      if (complaint.status == 'Resolvido')
+                                                        Padding(
+                                                          padding: const EdgeInsets.only(top: 16.0),
+                                                          child: OutlinedButton.icon(
+                                                            onPressed: () {
+                                                              // Mostrar modal de confirmação antes de reabrir
+                                                              showDialog(
+                                                                context: context,
+                                                                builder: (BuildContext context) {
+                                                                  return AlertDialog(
+                                                                    title: const Text('Confirmar Reabertura'),
+                                                                    content: const Text(
+                                                                      'Tem certeza que deseja reabrir esta denúncia?',
+                                                                    ),
+                                                                    actions: [
+                                                                      TextButton(
+                                                                        onPressed: () {
+                                                                          Navigator.of(context).pop(); // Fecha o diálogo
+                                                                          
+                                                                          // Retorna para a tela anterior com o status atualizado
+                                                                          Navigator.of(context).pop(
+                                                                            ComplaintModel(
+                                                                             
+                                                                              descricao: complaint.descricao,
+                                                                              endereco: complaint.endereco,
+                                                                              dataReporte: complaint.dataReporte,
+                                                                              status: 'Em Atendimento',
+                                                                              imagemUrl: complaint.imagemUrl,
+                                                                            ),
+                                                                          );
+                                                                        },
+                                                                        child: const Text('Confirmar'),
+                                                                      ),
+                                                                      TextButton(
+                                                                        onPressed: () {
+                                                                          Navigator.of(context).pop(); // Fecha apenas o diálogo
+                                                                        },
+                                                                        child: const Text('Cancelar'),
+                                                                      ),
+                                                                    ],
+                                                                  );
+                                                                },
+                                                              );
+                                                            },
+                                                            icon: const Icon(Icons.refresh),
+                                                            label: const Text('Reabrir Denúncia'),
+                                                            style: OutlinedButton.styleFrom(
+                                                              foregroundColor: Colors.orange,
+                                                              side: const BorderSide(color: Colors.orange),
+                                                              padding: const EdgeInsets.symmetric(
+                                                                vertical: 16,
+                                                              ),
+                                                              shape: RoundedRectangleBorder(
+                                                                borderRadius: BorderRadius.circular(8),
+                                                              ),
                                                             ),
-                                                            shape: RoundedRectangleBorder(
-                                                              borderRadius: BorderRadius.circular(8),
+                                                          ),
+                                                        ),
+                                                      
+                                                      // Botão de cancelar denúncia (mostrar para pendente e em atendimento)
+                                                      if (complaint.status == 'Pendente' || complaint.status == 'Em Atendimento')
+                                                        Padding(
+                                                          padding: const EdgeInsets.only(top: 16.0),
+                                                          child: OutlinedButton.icon(
+                                                            onPressed: () {
+                                                              // Mostrar modal de confirmação antes de cancelar
+                                                              showDialog(
+                                                                context: context,
+                                                                builder: (BuildContext context) {
+                                                                  return AlertDialog(
+                                                                    title: const Text('Confirmar Cancelamento'),
+                                                                    content: const Text(
+                                                                      'Tem certeza que deseja cancelar esta denúncia? Esta ação não pode ser desfeita.',
+                                                                    ),
+                                                                    actions: [
+                                                                      TextButton(
+                                                                        onPressed: () {
+                                                                          Navigator.of(context).pop(); // Fecha o diálogo
+                                                                          
+                                                                          // Retorna para a tela anterior com o status atualizado
+                                                                          Navigator.of(context).pop(
+                                                                            ComplaintModel(
+                                                                             
+                                                                              descricao: complaint.descricao,
+                                                                              endereco: complaint.endereco,
+                                                                              dataReporte: complaint.dataReporte,
+                                                                              status: 'Cancelado',
+                                                                              imagemUrl: complaint.imagemUrl,
+                                                                            ),
+                                                                          );
+                                                                        },
+                                                                        child: const Text('Confirmar'),
+                                                                      ),
+                                                                      TextButton(
+                                                                        onPressed: () {
+                                                                          Navigator.of(context).pop(); // Fecha apenas o diálogo
+                                                                        },
+                                                                        child: const Text('Cancelar'),
+                                                                      ),
+                                                                    ],
+                                                                  );
+                                                                },
+                                                              );
+                                                            },
+                                                            icon: const Icon(Icons.cancel_outlined),
+                                                            label: const Text('Cancelar Denúncia'),
+                                                            style: OutlinedButton.styleFrom(
+                                                              foregroundColor: Colors.red,
+                                                              side: const BorderSide(color: Colors.red),
+                                                              padding: const EdgeInsets.symmetric(
+                                                                vertical: 16,
+                                                              ),
+                                                              shape: RoundedRectangleBorder(
+                                                                borderRadius: BorderRadius.circular(8),
+                                                              ),
                                                             ),
                                                           ),
                                                         ),
@@ -404,181 +578,6 @@ class ComplaintDetailsPage extends StatelessWidget {
                               );
                             },
                           ),
-                          
-                          // Exibir imagem e botões em layout mobile
-                          if (MediaQuery.of(context).size.width <= 768) ...[
-                            const SizedBox(height: 24),
-                            
-                            // Exibir imagem se disponível
-                            if (complaint.imagemUrl != null &&
-                                complaint.imagemUrl!.isNotEmpty) ...[
-                              Card(
-                                elevation: 0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  side: BorderSide(
-                                    color: Colors.grey.shade200,
-                                  ),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      const Padding(
-                                        padding: EdgeInsets.only(bottom: 16.0),
-                                        child: Text(
-                                          'Imagem Anexada',
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            color: AppColors.textPrimary,
-                                          ),
-                                        ),
-                                      ),
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(8),
-                                        child: Image.network(
-                                          complaint.imagemUrl!,
-                                          fit: BoxFit.cover,
-                                          errorBuilder: (context, error, stackTrace) {
-                                            return Center(
-                                              child: Column(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                children: [
-                                                  Icon(
-                                                    Icons.broken_image,
-                                                    size: 48,
-                                                    color: Colors.grey.shade400,
-                                                  ),
-                                                  const SizedBox(height: 8),
-                                                  Text(
-                                                    'Não foi possível carregar a imagem',
-                                                    style: TextStyle(color: Colors.grey.shade600),
-                                                  ),
-                                                ],
-                                              ),
-                                            );
-                                          },
-                                          loadingBuilder: (context, child, loadingProgress) {
-                                            if (loadingProgress == null) return child;
-                                            return Center(
-                                              child: CircularProgressIndicator(
-                                                value:
-                                                    loadingProgress.expectedTotalBytes != null
-                                                        ? loadingProgress.cumulativeBytesLoaded /
-                                                            loadingProgress.expectedTotalBytes!
-                                                        : null,
-                                                color: const Color(0xFF00A3D7),
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 24),
-                            ],
-                            
-                            // Card de ações para mobile
-                            Card(
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                side: BorderSide(
-                                  color: Colors.grey.shade200,
-                                ),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(24.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text(
-                                      'Ações',
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: AppColors.textPrimary,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 24),
-                                    
-                                    // Botões de ação
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                                      children: [
-                                        // Botão de atender denúncia (apenas mostrar se estiver pendente)
-                                        if (complaint.status == 'Pendente')
-                                          OutlinedButton.icon(
-                                            onPressed: () {
-                                              // ... existing code ...
-                                            },
-                                            icon: const Icon(Icons.check_circle_outline),
-                                            label: const Text('Atender Denúncia'),
-                                            style: OutlinedButton.styleFrom(
-                                              foregroundColor: const Color(0xFF00A3D7),
-                                              side: const BorderSide(color: Color(0xFF00A3D7)),
-                                              padding: const EdgeInsets.symmetric(
-                                                vertical: 16,
-                                              ),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(8),
-                                              ),
-                                            ),
-                                          ),
-                                        
-                                        // Botão para marcar como atendido (apenas mostrar se estiver em andamento)
-                                        if (complaint.status == 'Em andamento') ...[
-                                          ElevatedButton.icon(
-                                            onPressed: () {
-                                              // ... existing code ...
-                                            },
-                                            icon: const Icon(Icons.task_alt),
-                                            label: const Text('Finalizar Atendimento'),
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: const Color(0xFF00A3D7),
-                                              foregroundColor: Colors.white,
-                                              padding: const EdgeInsets.symmetric(
-                                                vertical: 16,
-                                              ),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(8),
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(height: 16),
-                                        ],
-                                        
-                                        // Botão para cancelar denúncia (mostrar para pendente e em andamento)
-                                        if (complaint.status == 'Pendente' ||
-                                            complaint.status == 'Em andamento')
-                                          ElevatedButton.icon(
-                                            onPressed: () {
-                                              // ... existing code ...
-                                            },
-                                            icon: const Icon(Icons.cancel_outlined),
-                                            label: const Text('Cancelar Denúncia'),
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.red.shade50,
-                                              foregroundColor: Colors.red,
-                                              padding: const EdgeInsets.symmetric(
-                                                vertical: 16,
-                                              ),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(8),
-                                              ),
-                                            ),
-                                          ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
                         ],
                       ),
                     ),
@@ -592,16 +591,16 @@ class ComplaintDetailsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailItem(
-    IconData icon,
-    String label,
-    String value, {
-    bool isMultiline = false,
-  }) {
+  // Método auxiliar para construir itens de detalhes
+  Widget _buildDetailItem(IconData icon, String label, String value) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, color: AppColors.textSecondary, size: 20),
+        Icon(
+          icon,
+          size: 20,
+          color: Colors.grey.shade600,
+        ),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
@@ -609,10 +608,9 @@ class ComplaintDetailsPage extends StatelessWidget {
             children: [
               Text(
                 label,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textSecondary,
+                  color: Colors.grey.shade600,
                 ),
               ),
               const SizedBox(height: 4),
@@ -634,15 +632,15 @@ class ComplaintDetailsPage extends StatelessWidget {
   Color _getStatusBackgroundColor(String status) {
     switch (status) {
       case 'Pendente':
-        return const Color(0xFFFEF3C7); // Amarelo claro
-      case 'Em andamento':
-        return const Color(0xFFDCFCE7); // Verde claro
-      case 'Atendido':
-        return const Color(0xFFD1FAE5); // Verde mais claro
+        return const Color(0xFFFFF8E6);
+      case 'Em Atendimento':
+        return const Color(0xFFE6F4FF);
+      case 'Resolvido':
+        return const Color(0xFFE6FFF0);
       case 'Cancelado':
-        return const Color(0xFFFEE2E2); // Vermelho claro
+        return const Color(0xFFFFE6E6);
       default:
-        return const Color(0xFFE5E7EB); // Cinza claro
+        return Colors.grey.shade100;
     }
   }
 
@@ -650,15 +648,15 @@ class ComplaintDetailsPage extends StatelessWidget {
   Color _getStatusTextColor(String status) {
     switch (status) {
       case 'Pendente':
-        return const Color(0xFFD97706); // Laranja
-      case 'Em andamento':
-        return const Color(0xFF059669); // Verde
-      case 'Atendido':
-        return const Color(0xFF047857); // Verde escuro
+        return const Color(0xFFE6A700);
+      case 'Em Atendimento':
+        return const Color(0xFF0078D4);
+      case 'Resolvido':
+        return const Color(0xFF00A36C);
       case 'Cancelado':
-        return const Color(0xFFDC2626); // Vermelho
+        return const Color(0xFFD42A00);
       default:
-        return const Color(0xFF6B7280); // Cinza
+        return Colors.grey.shade700;
     }
   }
 }
