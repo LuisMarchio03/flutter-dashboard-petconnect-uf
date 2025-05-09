@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/features/rescues/domain/models/rescue_model.dart';
 import '../../features/dashboard/presentation/pages/dashboard_page.dart';
 import '../../features/complaints/presentation/pages/complaints_page.dart';
 import '../../features/complaints/presentation/pages/complaint_form_page.dart';
@@ -27,7 +28,7 @@ class AppRoutes {
     complaints: (context) => const ComplaintsPage(),
     complaintForm: (context) => ComplaintFormPage(),
     animals: (context) => const AnimalsPage(),
-    animalForm: (context) => AnimalFormPage(),
+    animalForm: (context) => AnimalFormPage(resgate: RescueModel(status: 'pending')),
     rescues: (context) => const RescuesPage(),
     rescueForm: (context) => RescueFormPage(),
     users: (context) => const UsersPage(),

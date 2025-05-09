@@ -53,9 +53,7 @@ class ComplaintListItem extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: complaint.status == 'Pendente' 
-                      ? const Color(0xFFFEF3C7) 
-                      : const Color(0xFFD1FAE5),
+                  color: _getStatusBackgroundColor(complaint.status),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
@@ -63,9 +61,7 @@ class ComplaintListItem extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
-                    color: complaint.status == 'Pendente' 
-                        ? const Color(0xFFD97706) 
-                        : const Color(0xFF059669),
+                    color: _getStatusTextColor(complaint.status),
                   ),
                 ),
               ),
@@ -119,22 +115,85 @@ class ComplaintListItem extends StatelessWidget {
                 child: const Text('Detalhes'),
               ),
               const SizedBox(width: 8),
-              ElevatedButton(
-                onPressed: onAttend,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF00A3D7),
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-                child: const Text('Atender'),
-              ),
+              // ElevatedButton(
+              //   onPressed: () {
+              //     // Mostrar modal de confirmação antes de atender
+              //     showDialog(
+              //       context: context,
+              //       builder: (BuildContext context) {
+              //         return AlertDialog(
+              //           title: const Text('Confirmar Atendimento'),
+              //           content: const Text('Tem certeza que deseja atender esta denúncia?'),
+              //           actions: [
+              //             TextButton(
+              //               onPressed: () {
+              //                 Navigator.of(context).pop(); // Fecha o diálogo
+              //               },
+              //               child: const Text('Cancelar'),
+              //             ),
+              //             TextButton(
+              //               onPressed: () {
+              //                 Navigator.of(context).pop(); // Fecha o diálogo
+              //                 onAttend(); // Executa a ação de atendimento
+              //               },
+              //               style: TextButton.styleFrom(
+              //                 foregroundColor: const Color(0xFF00A3D7),
+              //               ),
+              //               child: const Text('Confirmar'),
+              //             ),
+              //           ],
+              //         );
+              //       },
+              //     );
+              //   },
+              //   style: ElevatedButton.styleFrom(
+              //     backgroundColor: const Color(0xFF00A3D7),
+              //     foregroundColor: Colors.white,
+              //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              //     shape: RoundedRectangleBorder(
+              //       borderRadius: BorderRadius.circular(4),
+              //     ),
+              //   ),
+              //   child: const Text('Atender'),
+              // ),
             ],
           ),
         ],
       ),
     );
+  }
+}
+
+// Método para obter a cor de fundo do status
+Color _getStatusBackgroundColor(String status) {
+  switch (status) {
+    case 'Pendente':
+      return const Color(0xFFFEF3C7); // Amarelo claro
+    case 'Em andamento':
+    case 'Em Atendimento':
+      return const Color(0xFFDCFCE7); // Verde claro
+    case 'Atendido':
+      return const Color(0xFFD1FAE5); // Verde mais claro
+    case 'Cancelado':
+      return const Color(0xFFFEE2E2); // Vermelho claro
+    default:
+      return const Color(0xFFF3F4F6); // Cinza claro
+  }
+}
+
+// Método para obter a cor do texto do status
+Color _getStatusTextColor(String status) {
+  switch (status) {
+    case 'Pendente':
+      return const Color(0xFFD97706); // Laranja
+    case 'Em andamento':
+    case 'Em Atendimento':
+      return const Color(0xFF059669); // Verde
+    case 'Atendido':
+      return const Color(0xFF059669); // Verde
+    case 'Cancelado':
+      return const Color(0xFFDC2626); // Vermelho
+    default:
+      return const Color(0xFF6B7280); // Cinza
   }
 }

@@ -33,7 +33,7 @@ class RescueListItem extends StatelessWidget {
             children: [
               // Enviado por
               Text(
-                'Enviado - ${rescue.data} às ${rescue.hora}',
+                'Enviado - ${rescue.dataResgate}',
                 style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
@@ -76,7 +76,7 @@ class RescueListItem extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  rescue.endereco,
+                  rescue.localizacao?? '',
                   style: const TextStyle(
                     fontSize: 14,
                     color: Color(0xFF333333),
@@ -92,7 +92,7 @@ class RescueListItem extends StatelessWidget {
             children: [
               const SizedBox(width: 24),
               Text(
-                rescue.endereco,
+                rescue.localizacao ?? '',
                 style: const TextStyle(
                   fontSize: 14,
                   color: Color(0xFF6B7280),
@@ -135,7 +135,7 @@ class RescueListItem extends StatelessWidget {
           const SizedBox(height: 12),
           // Descrição
           Text(
-            rescue.descricao,
+            rescue.observacoes ?? '',
             style: const TextStyle(
               fontSize: 14,
               color: Color(0xFF333333),

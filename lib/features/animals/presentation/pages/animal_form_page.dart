@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/core/widgets/sidebar_menu.dart';
+import 'package:myapp/features/rescues/domain/models/rescue_model.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../domain/models/animal_model.dart';
 
@@ -7,7 +8,7 @@ class AnimalFormPage extends StatefulWidget {
   final AnimalModel? animal;
   final bool isEditing;
 
-  const AnimalFormPage({super.key, this.animal, this.isEditing = false});
+  const AnimalFormPage({super.key, this.animal, this.isEditing = false, required RescueModel resgate});
 
   @override
   State<AnimalFormPage> createState() => _AnimalFormPageState();

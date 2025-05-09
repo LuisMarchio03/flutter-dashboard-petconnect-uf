@@ -44,7 +44,8 @@ class PetConnectApp extends StatelessWidget {
           return MaterialPageRoute(
             builder: (context) => AnimalFormPage(
               animal: args != null ? args as AnimalModel : null,
-              isEditing: args != null,
+              isEditing: args != null, 
+              resgate: RescueModel(status: 'pending')
             ),
           );
         }

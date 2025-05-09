@@ -3,6 +3,7 @@ import 'package:myapp/core/routes/app_routes.dart';
 import 'package:myapp/core/widgets/confirm_delete_dialog.dart';
 import 'package:myapp/core/widgets/sidebar_menu.dart';
 import 'package:myapp/features/animals/presentation/pages/animal_form_page.dart';
+import 'package:myapp/features/rescues/domain/models/rescue_model.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../domain/models/animal_model.dart';
 import '../widgets/animal_list_item.dart';
@@ -267,8 +268,9 @@ class _AnimalsPageState extends State<AnimalsPage> {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => AnimalFormPage(animal: animal, isEditing: true),
+        builder: (context) => AnimalFormPage(animal: animal, isEditing: true, resgate: RescueModel(status: 'pending')
       ),
+    ),
     );
 
     if (result != null && result is AnimalModel) {

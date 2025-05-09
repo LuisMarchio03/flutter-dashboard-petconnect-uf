@@ -47,10 +47,9 @@ class _RescueFormPageState extends State<RescueFormPage> {
       _especieController.text = widget.rescue!.especie ?? '';
       _idadeController.text = widget.rescue!.idade ?? '';
       _sexoController.text = widget.rescue!.sexo ?? '';
-      _descricaoController.text = widget.rescue!.descricao;
-      _enderecoController.text = widget.rescue!.endereco;
-      _dataController.text = widget.rescue!.data;
-      _horaController.text = widget.rescue!.hora;
+      _descricaoController.text = widget.rescue!.observacoes!;
+      _enderecoController.text = widget.rescue!.localizacao!;
+      _dataController.text = widget.rescue!.dataResgate!;
       _condicaoAnimalController.text = widget.rescue!.condicaoAnimal ?? '';
       _observacoesController.text = widget.rescue!.observacoes ?? '';
       
