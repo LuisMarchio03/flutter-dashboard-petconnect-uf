@@ -472,7 +472,7 @@ class ComplaintDetailsPage extends StatelessWidget {
                                                         ),
                                                       
                                                       // Botão de reabrir denúncia (apenas mostrar se estiver resolvida)
-                                                      if (complaint.status == 'Resolvido')
+                                                      if (complaint.status == 'Resolvido' || complaint.status == 'Cancelado')
                                                         Padding(
                                                           padding: const EdgeInsets.only(top: 16.0),
                                                           child: OutlinedButton.icon(
