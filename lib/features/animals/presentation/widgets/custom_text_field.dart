@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
 
 class CustomTextField extends StatelessWidget {
-  final String label;
   final TextEditingController controller;
-  final int maxLines;
-  final TextInputType keyboardType;
-  final IconData? prefixIcon;
-  
+  final String label;
+  final String hint;
+  final IconData icon;
+  final TextInputType? keyboardType;
+  final int? maxLines;
+  final String? Function(String?)? validator;
+
   const CustomTextField({
     Key? key,
-    required this.label,
     required this.controller,
-    this.maxLines = 1,
-    this.keyboardType = TextInputType.text,
-    this.prefixIcon,
+    required this.label,
+    required this.hint,
+    required this.icon,
+    this.keyboardType,
+    this.maxLines,
+    this.validator, required IconData prefixIcon,
   }) : super(key: key);
 
   @override
@@ -24,43 +28,41 @@ class CustomTextField extends StatelessWidget {
         Text(
           label,
           style: const TextStyle(
-            fontWeight: FontWeight.w500,
             fontSize: 14,
-            color: Color(0xFF374151),
+            fontWeight: FontWeight.w500,
+            color: Color(0xFF1F2937),
           ),
         ),
         const SizedBox(height: 8),
         TextFormField(
           controller: controller,
-          maxLines: maxLines,
           keyboardType: keyboardType,
+          maxLines: maxLines ?? 1,
+          validator: validator,
           decoration: InputDecoration(
-            filled: true,
-            fillColor: const Color(0xFFF9FAFB),
+            hintText: hint,
+            prefixIcon: Icon(icon, color: const Color(0xFF6B7280)),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey.shade300),
+              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey.shade300),
+              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Color(0xFF00A3D7), width: 2),
+              borderSide: const BorderSide(color: Color(0xFF00A3D7)),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(color: Color(0xFFEF4444)),
             ),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
               vertical: 12,
             ),
-            prefixIcon: prefixIcon != null ? Icon(prefixIcon, color: Colors.grey) : null,
           ),
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Campo obrigatório';
-            }
-            return null;
-          },
         ),
       ],
     );

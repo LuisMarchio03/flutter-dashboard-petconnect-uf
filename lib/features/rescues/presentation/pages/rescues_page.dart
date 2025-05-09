@@ -30,7 +30,6 @@ class _RescuesPageState extends State<RescuesPage> {
       especie: 'Gato doméstico',
       status: RescueModel.STATUS_PENDENTE,
       dataResgate: '2023-09-25',
-
       nomeAnimal: 'Max',
       idade: '3 anos',
     ),
@@ -42,7 +41,6 @@ class _RescuesPageState extends State<RescuesPage> {
       especie: 'Guaxinim',
       status: RescueModel.STATUS_EM_ANDAMENTO,
       dataResgate: '2023-09-24',
-
       nomeAnimal: '',
       idade: '',
     ),
@@ -54,7 +52,6 @@ class _RescuesPageState extends State<RescuesPage> {
       especie: 'Cachorro',
       status: RescueModel.STATUS_RESGATADO,
       dataResgate: '2023-09-22',
-
       nomeAnimal: 'Thor',
       idade: '2 anos',
     ),
@@ -101,195 +98,25 @@ class _RescuesPageState extends State<RescuesPage> {
     return Scaffold(
       body: Row(
         children: [
-          // Menu lateral
-          const SidebarMenu(selectedItem: 'Resgates'),
-          // Conteúdo principal
+          const SidebarMenu(selectedItem: "Resgates"),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Cabeçalho
-                  Container(
-                  padding: const EdgeInsets.all(24.0),
-                  child: HeaderWidget(
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const HeaderWidget(
                     title: 'Resgates',
-                    subtitle: 'Lista de resgates',
+                    subtitle: 'Gerencie os resgates de animais',
                   ),
-                ),
-              // Barra de pesquisa e filtros
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: SearchBarWidget(
-                          controller: _searchController,
-                          onChanged: (value) {
-                            setState(() {});
-                          },
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      // Filtro de status
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: const Color(0xFFE5E7EB)),
-                        ),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                            value: _filtroStatus.isEmpty ? null : _filtroStatus,
-                            hint: const Text('Filtrar por status'),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                _filtroStatus = newValue ?? '';
-                              });
-                            },
-                            items: [
-                              const DropdownMenuItem<String>(
-                                value: '',
-                                child: Text('Todos'),
-                              ),
-                              ...RescueModel.getStatusList().map((
-                                String status,
-                              ) {
-                                return DropdownMenuItem<String>(
-                                  value: status,
-                                  child: Text(status),
-                                );
-                              }).toList(),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      // Botão de adicionar resgate
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          _adicionarNovoResgate();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF00A3D7),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        icon: const Icon(Icons.add, color: Colors.white),
-                        label: const Text(
-                          'Novo Resgate',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 24),
-
-                // Tabela de resgates com o novo componente DataTableWidget
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: DataTableWidget(
-                      columns: const [
-                        'Animal',
-                        'Espécie',
-                        'Local',
-                        'Data',
-                        'Status',
-                        'Ações',
-                      ],
-                      rows:
-                          resgatesFiltrados
-                              .map(
-                                (resgate) => {
-                                  'animal':
-                                      resgate.nomeAnimal?.isNotEmpty == true
-                                          ? resgate.nomeAnimal!
-                                          : 'Não identificado',
-                                  'espécie':
-                                      resgate.especie ?? 'Não especificado',
-                                  'local':
-                                      resgate.localizacao ?? 'Não especificado',
-                                  'data':
-                                      resgate.dataResgate ?? 'Não especificado',
-                                  'status': resgate.status,
-                                },
-                              )
-                              .toList(),
-                      customCellBuilders: {
-                        'status':
-                            (value) => StatusBadgeWidget(
-                              status: value.toString(),
-                              statusColors: {
-                                RescueModel.STATUS_PENDENTE: Colors.orange,
-                                RescueModel.STATUS_EM_ANDAMENTO: Colors.blue,
-                                RescueModel.STATUS_RESGATADO: Colors.green,
-                                RescueModel.STATUS_NAO_LOCALIZADO: Colors.red,
-                              },
-                            ),
-                      },
-                      actions: [
-                        DataTableAction(
-                          icon: Icons.visibility,
-                          color: const Color(0xFF6B7280),
-                          tooltip: 'Ver detalhes',
-                          onPressed:
-                              (index) =>
-                                  _visualizarResgate(resgatesFiltrados[index]),
-                        ),
-                        DataTableAction(
-                          icon: Icons.edit,
-                          color: const Color(0xFF6B7280),
-                          tooltip: 'Editar',
-                          onPressed: (index) {
-                            final originalIndex = resgates.indexOf(
-                              resgatesFiltrados[index],
-                            );
-                            _editarResgate(
-                              resgatesFiltrados[index],
-                            );
-                          },
-                        ),
-                        DataTableAction(
-                          icon: Icons.update,
-                          color: const Color(0xFF00A3D7),
-                          tooltip: 'Atualizar status',
-                          onPressed: (index) {
-                            final originalIndex = resgates.indexOf(
-                              resgatesFiltrados[index],
-                            );
-                            _atualizarStatusResgate(
-                              resgatesFiltrados[index],
-                              originalIndex,
-                            );
-                          },
-                        ),
-                        DataTableAction(
-                          icon: Icons.delete,
-                          color: Colors.red,
-                          tooltip: 'Excluir',
-                          onPressed: (index) {
-                            final originalIndex = resgates.indexOf(
-                              resgatesFiltrados[index],
-                            );
-                            _confirmarExclusao(context, () {
-                              setState(() {
-                                resgates.removeAt(originalIndex);
-                              });
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+                  const SizedBox(height: 24),
+                  _buildStatusCards(),
+                  const SizedBox(height: 24),
+                  _buildActionBar(),
+                  const SizedBox(height: 24),
+                  Expanded(child: _buildRescuesList(resgatesFiltrados)),
+                ],
+              ),
             ),
           ),
         ],
@@ -297,182 +124,197 @@ class _RescuesPageState extends State<RescuesPage> {
     );
   }
 
-  // Widget _buildTableHeader(String text) {
-  //   return Text(
-  //     text,
-  //     style: const TextStyle(
-  //       fontWeight: FontWeight.bold,
-  //       color: Color(0xFF374151),
-  //     ),
-  //   );
-  // }
+  Widget _buildStatusCards() {
+    final Map<String, Map<String, dynamic>> statusInfo = {
+      RescueModel.STATUS_PENDENTE: {
+        'label': 'Pendentes',
+        'icon': '⏳',
+        'color': const Color(0xFFFFF4E0),
+        'textColor': const Color(0xFFF59E0B),
+        'count':
+            resgates
+                .where((r) => r.status == RescueModel.STATUS_PENDENTE)
+                .length,
+      },
+      RescueModel.STATUS_EM_ANDAMENTO: {
+        'label': 'Em Andamento',
+        'icon': '🚑',
+        'color': const Color(0xFFE0F7FF),
+        'textColor': const Color(0xFF00A3D7),
+        'count':
+            resgates
+                .where((r) => r.status == RescueModel.STATUS_EM_ANDAMENTO)
+                .length,
+      },
+      RescueModel.STATUS_RESGATADO: {
+        'label': 'Resgatados',
+        'icon': '✅',
+        'color': const Color(0xFFE0F7F0),
+        'textColor': const Color(0xFF10B981),
+        'count':
+            resgates
+                .where((r) => r.status == RescueModel.STATUS_RESGATADO)
+                .length,
+      },
+      RescueModel.STATUS_CANCELADO: {
+        'label': 'Cancelados',
+        'icon': '❌',
+        'color': const Color(0xFFFFE0E6),
+        'textColor': const Color(0xFFF43F5E),
+        'count':
+            resgates
+                .where((r) => r.status == RescueModel.STATUS_CANCELADO)
+                .length,
+      },
+    };
 
-  // Widget _buildRescueRow(RescueModel resgate, int index) {
-  //   return Padding(
-  //     padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-  //     child: Row(
-  //       children: [
-  //         // Nome do animal
-  //         Expanded(
-  //           flex: 2,
-  //           child: Text(
-  //             resgate.nomeAnimal?.isNotEmpty == true ? resgate.nomeAnimal! : 'Não identificado',
-  //             style: const TextStyle(color: Color(0xFF374151)),
-  //           ),
-  //         ),
-  //         // Espécie
-  //         Expanded(
-  //           flex: 2,
-  //           child: Text(
-  //             resgate.especie ?? 'Não especificado',
-  //             style: const TextStyle(color: Color(0xFF374151)),
-  //           ),
-  //         ),
-  //         // Local
-  //         Expanded(
-  //           flex: 2,
-  //           child: Text(
-  //             resgate.localizacao ?? 'Não especificado',
-  //             overflow: TextOverflow.ellipsis,
-  //             style: const TextStyle(color: Color(0xFF374151)),
-  //           ),
-  //         ),
-  //         // Data
-  //         Expanded(
-  //           flex: 1,
-  //           child: Text(
-  //             resgate.dataResgate ?? 'Não especificado',
-  //             style: const TextStyle(color: Color(0xFF374151)),
-  //           ),
-  //         ),
-  //         // Status
-  //         Expanded(
-  //           flex: 1,
-  //           child: Container(
-  //             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-  //             decoration: BoxDecoration(
-  //               color: _getStatusColor(resgate.status),
-  //               borderRadius: BorderRadius.circular(4),
-  //             ),
-  //             child: Text(
-  //               resgate.status,
-  //               textAlign: TextAlign.center,
-  //               style: const TextStyle(
-  //                 color: Colors.white,
-  //                 fontSize: 12,
-  //                 fontWeight: FontWeight.w500,
-  //               ),
-  //             ),
-  //           ),
-  //         ),
-  //         // Ações
-  //         Expanded(
-  //           flex: 2,
-  //           child: Row(
-  //             mainAxisAlignment: MainAxisAlignment.end,
-  //             children: [
-  //               // Botão de detalhes
-  //               IconButton(
-  //                 icon: const Icon(Icons.visibility, size: 20),
-  //                 color: const Color(0xFF6B7280),
-  //                 onPressed: () => _verDetalhesResgate(resgate),
-  //               ),
-  //               // Botão de editar
-  //               IconButton(
-  //                 icon: const Icon(Icons.edit, size: 20),
-  //                 color: const Color(0xFF6B7280),
-  //                 onPressed: () => _editarResgate(index),
-  //               ),
-  //               // Botão de atualizar status
-  //               IconButton(
-  //                 icon: const Icon(Icons.update, size: 20),
-  //                 color: const Color(0xFF00A3D7),
-  //                 onPressed: () => _atualizarStatusResgate(resgate, index),
-  //               ),
-  //               // Botão de excluir
-  //               IconButton(
-  //                 icon: const Icon(Icons.delete, size: 20),
-  //                 color: Colors.red,
-  //                 onPressed: () {
-  //                   _confirmarExclusao(context, () {
-  //                     setState(() {
-  //                       resgates.removeAt(index);
-  //                     });
-  //                   });
-  //                 },
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
-  // Color _getStatusColor(String status) {
-  //   switch (status) {
-  //     case RescueModel.STATUS_PENDENTE:
-  //       return Colors.orange;
-  //     case RescueModel.STATUS_EM_ANDAMENTO:
-  //       return Colors.blue;
-  //     case RescueModel.STATUS_RESGATADO:
-  //       return Colors.green;
-  //     case RescueModel.STATUS_NAO_LOCALIZADO:
-  //       return Colors.red;
-  //     default:
-  //       return Colors.grey;
-  //   }
-  // }
-
-  // Método para adicionar um novo resgate
-  void _adicionarNovoResgate() async {
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const RescueFormPage(title: 'Novo Resgate'),
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 4,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        childAspectRatio: 2.0,
       ),
+      itemCount: statusInfo.length,
+      itemBuilder: (context, index) {
+        final status = statusInfo.keys.elementAt(index);
+        final info = statusInfo[status]!;
+        return _buildStatusCard(
+          label: info['label'] as String,
+          icon: info['icon'] as String,
+          color: info['color'] as Color,
+          textColor: info['textColor'] as Color,
+          count: info['count'] as int,
+          onTap: () {
+            setState(() {
+              _filtroStatus = _filtroStatus == status ? '' : status;
+            });
+          },
+          isSelected: _filtroStatus == status,
+        );
+      },
     );
-
-    if (result != null && result is RescueModel) {
-      setState(() {
-        resgates.add(result);
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Resgate cadastrado com sucesso!'),
-          backgroundColor: Colors.green,
-        ),
-      );
-    }
   }
 
-  void _editarResgate(RescueModel resgate) async {
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder:
-            (context) => RescueFormPage(
-              rescue: resgate,
-              isEditing: true,
-              title: 'Editar Resgate',
-            ),
+  Widget _buildStatusCard({
+    required String label,
+    required String icon,
+    required Color color,
+    required Color textColor,
+    required int count,
+    required VoidCallback onTap,
+    required bool isSelected,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: isSelected ? textColor : textColor.withOpacity(0.2),
+            width: isSelected ? 2 : 1,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(icon, style: const TextStyle(fontSize: 24)),
+              const SizedBox(height: 4),
+              Text(
+                count.toString(),
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: textColor,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: textColor,
+                  fontWeight: FontWeight.w500,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
       ),
     );
+  }
 
-    if (result != null && result is RescueModel) {
-      setState(() {
-        final index = resgates.indexWhere((r) => r.id == result.id);
-        if (index != -1) {
-          resgates[index] = result;
-        }
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Resgate atualizado com sucesso!'),
-          backgroundColor: Colors.green,
+  Widget _buildActionBar() {
+    return Row(
+      children: [
+        Expanded(
+          child: SearchBarWidget(
+            controller: _searchController,
+            onChanged: (value) {
+              setState(() {});
+            },
+          ),
+        ),
+        const SizedBox(width: 16),
+        ElevatedButton.icon(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder:
+                    (context) => RescueFormPage(title: 'Registrar Resgate'),
+              ),
+            );
+          },
+          icon: const Icon(Icons.add),
+          label: const Text('Novo Resgate'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF00A3D7),
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRescuesList(List<RescueModel> resgates) {
+    if (resgates.isEmpty) {
+      return const Center(
+        child: Text(
+          'Nenhum resgate encontrado',
+          style: TextStyle(fontSize: 16, color: Color(0xFF6B7280)),
         ),
       );
     }
+
+    return ListView.builder(
+      itemCount: resgates.length,
+      itemBuilder: (context, index) {
+        final resgate = resgates[index];
+        return RescueListItem(
+          rescue: resgate,
+          onDetails: () => _verDetalhesResgate(resgate),
+          onEdit: () => _editarResgate(resgate),
+          onDelete:
+              () => _confirmarExclusao(context, () {
+                setState(() {
+                  resgates.removeAt(index);
+                });
+              }),
+          onUpdateStatus: () => _atualizarStatusResgate(resgate, index),
+        );
+      },
+    );
   }
 
   void _verDetalhesResgate(RescueModel resgate) {
@@ -480,6 +322,17 @@ class _RescuesPageState extends State<RescuesPage> {
       context,
       MaterialPageRoute(
         builder: (context) => RescueDetailsPage(rescue: resgate),
+      ),
+    );
+  }
+
+  void _editarResgate(RescueModel resgate) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder:
+            (context) =>
+                RescueFormPage(title: 'Editar Resgate', rescue: resgate),
       ),
     );
   }
@@ -527,7 +380,6 @@ class _RescuesPageState extends State<RescuesPage> {
             ),
             ElevatedButton(
               onPressed: () {
-                // Atualizar o status do resgate
                 setState(() {
                   final resgateAtualizado = RescueModel(
                     id: resgate.id,
@@ -547,7 +399,6 @@ class _RescuesPageState extends State<RescuesPage> {
 
                 Navigator.pop(context);
 
-                // Se o status for "Resgatado", perguntar se deseja cadastrar o animal
                 if (novoStatus == RescueModel.STATUS_RESGATADO) {
                   _perguntarCadastroAnimal(resgate);
                 }
@@ -601,24 +452,6 @@ class _RescuesPageState extends State<RescuesPage> {
       context,
       MaterialPageRoute(builder: (context) => AnimalFormPage(resgate: resgate)),
     );
-  }
-
-  void _visualizarResgate(RescueModel resgate) async {
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => RescueDetailsPage(rescue: resgate),
-      ),
-    );
-
-    if (result != null && result is RescueModel) {
-      setState(() {
-        final index = resgates.indexWhere((r) => r.id == result.id);
-        if (index != -1) {
-          resgates[index] = result;
-        }
-      });
-    }
   }
 }
 

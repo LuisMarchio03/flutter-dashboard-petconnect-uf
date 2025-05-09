@@ -208,173 +208,195 @@ class _AnimalFormPageState extends State<AnimalFormPage> {
                             // Informações Básicas
                             FormSectionWidget(
                               title: 'Informações Básicas',
-                              children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: CustomTextField(
-                                        label: 'Nome',
-                                        controller: _nomeController,
-                                        prefixIcon: Icons.pets,
+                              icon: '',
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: CustomTextField(
+                                          label: 'Nome',
+                                          hint: 'Digite o nome do animal',
+                                          controller: _nomeController,
+                                          prefixIcon: Icons.pets, 
+                                          icon: Icons.pets,
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(width: 16),
-                                    Expanded(
-                                      child: _buildDropdown(
-                                        label: 'Gênero',
-                                        value: _genero,
-                                        items: _generoOptions,
-                                        onChanged: (value) {
-                                          if (value != null) {
-                                            setState(() {
-                                              _genero = value;
-                                            });
-                                          }
-                                        },
+                                      const SizedBox(width: 16),
+                                      Expanded(
+                                        child: _buildDropdown(
+                                          label: 'Gênero',
+                                          value: _genero,
+                                          items: _generoOptions,
+                                          onChanged: (value) {
+                                            if (value != null) {
+                                              setState(() {
+                                                _genero = value;
+                                              });
+                                            }
+                                          },
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 16),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: CustomTextField(
-                                        label: 'Espécie',
-                                        controller: _especieController,
+                                    ],
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: CustomTextField(
+                                          label: 'Espécie',
+                                          hint: 'Digite a espécie',
+                                          controller: _especieController,
+                                          icon: Icons.pets,
+                                          prefixIcon: Icons.pets,
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(width: 16),
-                                    Expanded(
-                                      child: _buildDropdown(
-                                        label: 'Status',
-                                        value: _status,
-                                        items: _statusOptions,
-                                        onChanged: (value) {
-                                          if (value != null) {
-                                            setState(() {
-                                              _status = value;
-                                            });
-                                          }
-                                        },
+                                      const SizedBox(width: 16),
+                                      Expanded(
+                                        child: _buildDropdown(
+                                          label: 'Status',
+                                          value: _status,
+                                          items: _statusOptions,
+                                          onChanged: (value) {
+                                            if (value != null) {
+                                              setState(() {
+                                                _status = value;
+                                              });
+                                            }
+                                          },
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                             
                             // Características Físicas
                             FormSectionWidget(
                               title: 'Características Físicas',
-                              children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: CustomTextField(
-                                        label: 'Raça',
-                                        controller: _racaController,
+                              icon: '',
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: CustomTextField(
+                                          label: 'Raça',
+                                          hint: 'Digite a raça',
+                                          icon: Icons.pets,
+                                          prefixIcon: Icons.pets,
+                                          controller: _racaController,
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(width: 16),
-                                    Expanded(
-                                      child: CustomTextField(
-                                        label: 'Cor',
-                                        controller: _corController,
+                                      const SizedBox(width: 16),
+                                      Expanded(
+                                        child: CustomTextField(
+                                          label: 'Cor',
+                                          hint: 'Digite a cor',
+                                          icon: Icons.pets,
+                                          prefixIcon: Icons.pets,
+                                          controller: _corController,
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 16),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: CustomTextField(
-                                        label: 'Porte',
-                                        controller: _porteController,
+                                    ],
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: CustomTextField(
+                                          label: 'Porte',
+                                          hint: 'Digite o porte',
+                                          icon: Icons.pets,
+                                          prefixIcon: Icons.pets, 
+                                          controller: _porteController,
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(width: 16),
-                                    Expanded(
-                                      child: CustomTextField(
-                                        label: 'Peso (kg)',
-                                        controller: _pesoController,
-                                        keyboardType: TextInputType.number,
+                                      const SizedBox(width: 16),
+                                      Expanded(
+                                        child: CustomTextField(
+                                          label: 'Peso (kg)',
+                                          icon: Icons.height,
+                                          prefixIcon: Icons.height,
+                                          hint: 'Digite o peso',
+                                          controller: _pesoController,
+                                          keyboardType: TextInputType.number,
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 16),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: CustomTextField(
-                                        label: 'Idade',
-                                        controller: _idadeController,
+                                    ],
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: CustomTextField(
+                                          label: 'Idade',
+                                          icon: Icons.numbers,
+                                          prefixIcon: Icons.numbers,
+                                          hint: 'Digite a idade',
+                                          controller: _idadeController,
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(width: 16),
-                                    Expanded(
-                                      child: CustomTextField(
-                                        label: 'Onde foi localizado?',
-                                        controller: _localizacaoController,
+                                      const SizedBox(width: 16),
+                                      Expanded(
+                                        child: CustomTextField(
+                                          label: 'Onde foi localizado?',
+                                          hint: 'Digite a localização',
+                                          icon: Icons.location_on,
+                                          prefixIcon: Icons.location_on,
+                                          controller: _localizacaoController,
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 16),
-                                CustomTextField(
-                                  label: 'Observações',
-                                  controller: _observacoesController,
-                                  maxLines: 3,
-                                ),
-                              ],
+                                    ],
+                                  ),
+                                  const SizedBox(height: 16),
+                                  CustomTextField(
+                                    label: 'Observações',
+                                    icon: Icons.comment,
+                                    prefixIcon: Icons.comment,
+                                    hint: 'Digite observações sobre o animal',
+                                    controller: _observacoesController,
+                                    maxLines: 3,
+                                  ),
+                                ],
+                              ),
                             ),
                             
                             // Informações de Saúde
                             FormSectionWidget(
                               title: 'Informações de Saúde',
-                              children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: DatePickerField(
-                                        label: 'Última Vacina',
-                                        selectedDate: _ultimaVacina,
-                                        initialDate: DateTime.now(),
-                                        firstDate: DateTime(2000),
-                                        lastDate: DateTime.now(),
-                                        onDateSelected: (date) {
-                                          setState(() {
-                                            _ultimaVacina = date;
-                                          });
-                                        },
+                              icon: '',
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: DatePickerField(
+                                          label: 'Última Vacina', value: null, onChanged: (DateTime? dateTime) {  },
+                                        
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(width: 16),
-                                    Expanded(
-                                      child: DatePickerField(
-                                        label: 'Próxima Vacina',
-                                        selectedDate: _proximaVacina,
-                                        initialDate: DateTime.now().add(const Duration(days: 30)),
-                                        firstDate: DateTime.now(),
-                                        lastDate: DateTime(2100),
-                                        onDateSelected: (date) {
-                                          setState(() {
-                                            _proximaVacina = date;
-                                          });
-                                        },
+                                      const SizedBox(width: 16),
+                                      Expanded(
+                                        child: DatePickerField(
+                                          label: 'Próxima Vacina',
+                                          value: null, onChanged: (DateTime? dateTime) {  },
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 16),
-                                CustomTextField(
-                                  label: 'Condições Médicas',
-                                  controller: _condicoesMedicasController,
-                                  maxLines: 3,
-                                ),
-                              ],
+                                    ],
+                                  ),
+                                  const SizedBox(height: 16),
+                                  CustomTextField(
+                                    label: 'Condições Médicas',
+                                    hint: 'Digite as condições médicas',
+                                    icon: Icons.medical_services,
+                                    prefixIcon: Icons.medical_services,
+                                    controller: _condicoesMedicasController,
+                                    maxLines: 3,
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),

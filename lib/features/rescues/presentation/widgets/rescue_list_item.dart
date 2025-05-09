@@ -1,192 +1,158 @@
 import 'package:flutter/material.dart';
-import '../../domain/models/rescue_model.dart';
+import 'package:myapp/core/widgets/status_badge_widget.dart';
+import 'package:myapp/features/rescues/domain/models/rescue_model.dart';
 
 class RescueListItem extends StatelessWidget {
   final RescueModel rescue;
   final VoidCallback onDetails;
-  final VoidCallback onUpdateStatus;
   final VoidCallback onEdit;
+  final VoidCallback onDelete;
+  final VoidCallback onUpdateStatus;
 
   const RescueListItem({
-    Key? key,
+    super.key,
     required this.rescue,
     required this.onDetails,
+    required this.onEdit,
+    required this.onDelete,
     required this.onUpdateStatus,
-    required this.onEdit, required Null Function() onDelete,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Color(0xFFEEEEEE), width: 1),
-        ),
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+        side: BorderSide(color: const Color(0xFFE5E7EB), width: 1),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Cabeçalho com enviado por e status
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Enviado por
-              Text(
-                'Enviado - ${rescue.dataResgate}',
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF333333),
-                ),
-              ),
-              const Spacer(),
-              // Status
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: rescue.status == 'Pendente' 
-                      ? const Color(0xFFFEF3C7) 
-                      : const Color(0xFFD1FAE5),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Text(
-                  rescue.status,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: rescue.status == 'Pendente' 
-                        ? const Color(0xFFD97706) 
-                        : const Color(0xFF059669),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        rescue.nomeAnimal?.isNotEmpty == true
+                            ? rescue.nomeAnimal!
+                            : 'Não identificado',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF374151),
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        rescue.especie ?? 'Não especificado',
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: Color(0xFF6B7280),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          // Endereço
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Icon(
-                Icons.location_on_outlined,
-                color: Color(0xFF6B7280),
-                size: 16,
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  rescue.localizacao?? '',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF333333),
-                  ),
+                StatusBadgeWidget(
+                  status: rescue.status,
+                  statusColors: {
+                    RescueModel.STATUS_PENDENTE: const Color(0xFFFFF4E0),
+                    RescueModel.STATUS_EM_ANDAMENTO: const Color(0xFFE0F7FF),
+                    RescueModel.STATUS_RESGATADO: const Color(0xFFE0F7F0),
+                    RescueModel.STATUS_CANCELADO: const Color(0xFFFFE0E6),
+                  },
+                  textColors: {
+                    RescueModel.STATUS_PENDENTE: const Color(0xFFF59E0B),
+                    RescueModel.STATUS_EM_ANDAMENTO: const Color(0xFF00A3D7),
+                    RescueModel.STATUS_RESGATADO: const Color(0xFF10B981),
+                    RescueModel.STATUS_CANCELADO: const Color(0xFFF43F5E),
+                  },
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          // Localização
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(width: 24),
-              Text(
-                rescue.localizacao ?? '',
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Color(0xFF6B7280),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          // Telefone
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Icon(
-                Icons.phone_outlined,
-                color: Color(0xFF6B7280),
-                size: 16,
-              ),              
-            ],
-          ),
-          const SizedBox(height: 8),
-          // Espécie de animal
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Icon(
-                Icons.pets_outlined,
-                color: Color(0xFF6B7280),
-                size: 16,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                'Espécie de animal: ${rescue.especie}',
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Color(0xFF6B7280),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          // Descrição
-          Text(
-            rescue.observacoes ?? '',
-            style: const TextStyle(
-              fontSize: 14,
-              color: Color(0xFF333333),
+              ],
             ),
-          ),
-          const SizedBox(height: 12),
-          // Botões
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              OutlinedButton(
-                onPressed: onDetails,
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: const Color(0xFF00A3D7),
-                  side: const BorderSide(color: Color(0xFF00A3D7)),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                const Icon(
+                  Icons.location_on,
+                  size: 14,
+                  color: Color(0xFF6B7280),
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    rescue.localizacao ?? 'Não especificado',
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: Color(0xFF6B7280),
+                    ),
                   ),
                 ),
-                child: const Text('Visualizar detalhes'),
-              ),
-              const SizedBox(width: 8),
-              OutlinedButton(
-                onPressed: onEdit,
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: const Color(0xFF059669),
-                  side: const BorderSide(color: Color(0xFF059669)),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
+              ],
+            ),
+            const SizedBox(height: 6),
+            Row(
+              children: [
+                const Icon(
+                  Icons.calendar_today,
+                  size: 14,
+                  color: Color(0xFF6B7280),
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  rescue.dataResgate ?? 'Não especificado',
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: Color(0xFF6B7280),
                   ),
                 ),
-                child: const Text('Editar'),
-              ),
-              const SizedBox(width: 8),
-              ElevatedButton(
-                onPressed: onUpdateStatus,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF00A3D7),
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
-                  ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.visibility, size: 18),
+                  color: const Color(0xFF6B7280),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  onPressed: onDetails,
                 ),
-                child: const Text('Atualizar status'),
-              ),
-            ],
-          ),
-        ],
+                const SizedBox(width: 16),
+                IconButton(
+                  icon: const Icon(Icons.edit, size: 18),
+                  color: const Color(0xFF6B7280),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  onPressed: onEdit,
+                ),
+                const SizedBox(width: 16),
+                IconButton(
+                  icon: const Icon(Icons.update, size: 18),
+                  color: const Color(0xFF00A3D7),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  onPressed: onUpdateStatus,
+                ),
+                const SizedBox(width: 16),
+                IconButton(
+                  icon: const Icon(Icons.delete, size: 18),
+                  color: const Color(0xFFF43F5E),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  onPressed: onDelete,
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

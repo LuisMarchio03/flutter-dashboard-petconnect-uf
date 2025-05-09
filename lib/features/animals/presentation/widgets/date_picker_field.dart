@@ -2,20 +2,16 @@ import 'package:flutter/material.dart';
 
 class DatePickerField extends StatelessWidget {
   final String label;
-  final DateTime? selectedDate;
-  final DateTime initialDate;
-  final DateTime firstDate;
-  final DateTime lastDate;
-  final Function(DateTime) onDateSelected;
-  
+  final DateTime? value;
+  final Function(DateTime?) onChanged;
+  final String? Function(DateTime?)? validator;
+
   const DatePickerField({
     Key? key,
     required this.label,
-    required this.selectedDate,
-    required this.initialDate,
-    required this.firstDate,
-    required this.lastDate,
-    required this.onDateSelected,
+    required this.value,
+    required this.onChanged,
+    this.validator,
   }) : super(key: key);
 
   @override
@@ -26,9 +22,9 @@ class DatePickerField extends StatelessWidget {
         Text(
           label,
           style: const TextStyle(
-            fontWeight: FontWeight.w500,
             fontSize: 14,
-            color: Color(0xFF374151),
+            fontWeight: FontWeight.w500,
+            color: Color(0xFF1F2937),
           ),
         ),
         const SizedBox(height: 8),
@@ -36,53 +32,36 @@ class DatePickerField extends StatelessWidget {
           onTap: () async {
             final date = await showDatePicker(
               context: context,
-              initialDate: initialDate,
-              firstDate: firstDate,
-              lastDate: lastDate,
-              builder: (context, child) {
-                return Theme(
-                  data: Theme.of(context).copyWith(
-                    colorScheme: const ColorScheme.light(
-                      primary: Color(0xFF00A3D7),
-                      onPrimary: Colors.white,
-                      surface: Colors.white,
-                      onSurface: Color(0xFF374151),
-                    ),
-                  ),
-                  child: child!,
-                );
-              },
+              initialDate: value ?? DateTime.now(),
+              firstDate: DateTime(2000),
+              lastDate: DateTime(2100),
             );
             if (date != null) {
-              onDateSelected(date);
+              onChanged(date);
             }
           },
           child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 12,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: const Color(0xFFF9FAFB),
+              border: Border.all(color: const Color(0xFFE5E7EB)),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.grey.shade300),
             ),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                Text(
+                  value?.toString().split(' ')[0] ?? 'Selecione uma data',
+                  style: TextStyle(
+                    color:
+                        value == null
+                            ? const Color(0xFF6B7280)
+                            : const Color(0xFF1F2937),
+                  ),
+                ),
                 const Icon(
                   Icons.calendar_today,
+                  color: Color(0xFF6B7280),
                   size: 20,
-                  color: Color(0xFF00A3D7),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  selectedDate != null
-                      ? '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}'
-                      : 'Selecionar Data',
-                  style: TextStyle(
-                    color: selectedDate != null ? const Color(0xFF374151) : Colors.grey[600],
-                  ),
                 ),
               ],
             ),

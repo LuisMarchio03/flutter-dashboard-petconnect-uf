@@ -7,6 +7,7 @@ import '../../domain/models/adoption_model.dart';
 import '../../domain/models/sponsorship_model.dart';
 import 'adoption_form_page.dart';
 import 'sponsorship_form_page.dart';
+import '../widgets/header_widget.dart';
 
 class AnimalDetailsPage extends StatefulWidget {
   final AnimalModel animal;
@@ -26,79 +27,26 @@ class _AnimalDetailsPageState extends State<AnimalDetailsPage> {
     return Scaffold(
       body: Row(
         children: [
-          const SidebarMenu(
-            selectedItem: "Animais",
-          ),
+          const SidebarMenu(selectedItem: "Animais"),
           Expanded(
             child: Container(
               padding: const EdgeInsets.all(24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Cabeçalho
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Detalhes do Animal',
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          ElevatedButton.icon(
-                            onPressed: () => _abrirFormularioAdocao(),
-                            icon: const Icon(Icons.pets),
-                            label: const Text('Adotar'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF10B981),
-                              foregroundColor: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          ElevatedButton.icon(
-                            onPressed: () => _abrirFormularioApadrinhamento(),
-                            icon: const Icon(Icons.favorite),
-                            label: const Text('Apadrinhar'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF3B82F6),
-                              foregroundColor: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                  const HeaderWidget(
+                    title: 'Detalhes do Animal',
+                    subtitle: 'Informações completas sobre o animal',
                   ),
                   const SizedBox(height: 24),
-
-                  // Conteúdo
                   Expanded(
                     child: SingleChildScrollView(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Informações Básicas
-                          _buildSection(
-                            title: 'Informações Básicas',
-                            child: _buildBasicInfo(),
-                          ),
+                          _buildProfileSection(),
                           const SizedBox(height: 24),
-
-                          // Informações de Saúde
-                          _buildSection(
-                            title: 'Informações de Saúde',
-                            child: _buildHealthInfo(),
-                          ),
-                          const SizedBox(height: 24),
-
-                          // Status de Adoção/Apadrinhamento
-                          _buildSection(
-                            title: 'Status',
-                            child: _buildStatusInfo(),
-                          ),
+                          _buildInfoSections(),
                         ],
                       ),
                     ),
@@ -112,231 +60,208 @@ class _AnimalDetailsPageState extends State<AnimalDetailsPage> {
     );
   }
 
-  Widget _buildSection({required String title, required Widget child}) {
+  Widget _buildProfileSection() {
     return Container(
-      width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
-            blurRadius: 5,
-            offset: const Offset(0, 2),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
+          // Avatar do animal
+          Container(
+            width: 120,
+            height: 120,
+            decoration: BoxDecoration(
+              color: const Color(0xFF00A3D7).withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.pets, size: 60, color: Color(0xFF00A3D7)),
+          ),
+          const SizedBox(width: 24),
+          // Informações principais
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.animal.nome,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1F2937),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                _buildStatusBadge(widget.animal.status),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    _buildInfoChip('🐕 ${widget.animal.especie}'),
+                    const SizedBox(width: 12),
+                    _buildInfoChip('🎨 ${widget.animal.cor}'),
+                    const SizedBox(width: 12),
+                    _buildInfoChip('⚖️ ${widget.animal.porte}'),
+                  ],
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 16),
-          child,
         ],
       ),
     );
   }
 
-  Widget _buildBasicInfo() {
-    return Column(
+  Widget _buildInfoSections() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildInfoRow('Nome', widget.animal.nome),
-        const SizedBox(height: 12),
-        _buildInfoRow('Espécie', widget.animal.especie),
-        const SizedBox(height: 12),
-        _buildInfoRow('Raça', widget.animal.raca),
-        const SizedBox(height: 12),
-        _buildInfoRow('Gênero', widget.animal.genero),
-        const SizedBox(height: 12),
-        _buildInfoRow('Idade', widget.animal.idade),
-        const SizedBox(height: 12),
-        _buildInfoRow('Porte', widget.animal.porte),
-        const SizedBox(height: 12),
-        _buildInfoRow('Cor', widget.animal.cor),
-        const SizedBox(height: 12),
-        _buildInfoRow('Localização', widget.animal.localizacao),
-      ],
-    );
-  }
-
-  Widget _buildHealthInfo() {
-    return Column(
-      children: [
-        _buildInfoRow('Última Vacina', widget.animal.ultimaVacina),
-        const SizedBox(height: 12),
-        _buildInfoRow('Próxima Vacina', widget.animal.proximaVacina),
-        const SizedBox(height: 12),
-        _buildInfoRow('Condições Médicas', widget.animal.condicoesMedicas),
-        const SizedBox(height: 12),
-        _buildInfoRow('Observações', widget.animal.observacoes),
-      ],
-    );
-  }
-
-  Widget _buildStatusInfo() {
-    return Column(
-      children: [
-        Row(
-          children: [
-            const Text(
-              'Status Geral: ',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-            StatusBadgeWidget(
-              status: widget.animal.status,
-              statusColors: {
-                'Disponível': const Color(0xFF10B981), // Verde
-                'Adotado': const Color(0xFF3B82F6), // Azul
-                'Em tratamento': const Color(0xFFEAB308), // Amarelo
-              },
-            ),
-          ],
+        Expanded(
+          child: _buildInfoCard('Informações Básicas', '📋', [
+            _buildInfoRow('Nome', widget.animal.nome),
+            _buildInfoRow('Espécie', widget.animal.especie),
+            _buildInfoRow('Raça', widget.animal.raca),
+            _buildInfoRow('Gênero', widget.animal.genero),
+            _buildInfoRow('Idade', widget.animal.idade),
+            _buildInfoRow('Porte', widget.animal.porte),
+            _buildInfoRow('Cor', widget.animal.cor),
+            _buildInfoRow('Localização', widget.animal.localizacao),
+          ]),
         ),
-        if (_adoption != null) ...[
-          const SizedBox(height: 16),
-          _buildAdoptionInfo(),
-        ],
-        if (_sponsorship != null) ...[
-          const SizedBox(height: 16),
-          _buildSponsorshipInfo(),
-        ],
+        const SizedBox(width: 24),
+        Expanded(
+          child: _buildInfoCard('Saúde', '🏥', [
+            _buildInfoRow('Última Vacina', widget.animal.ultimaVacina),
+            _buildInfoRow('Próxima Vacina', widget.animal.proximaVacina),
+            _buildInfoRow('Condições Médicas', widget.animal.condicoesMedicas),
+            _buildInfoRow('Observações', widget.animal.observacoes),
+          ]),
+        ),
       ],
     );
   }
 
-  Widget _buildAdoptionInfo() {
+  Widget _buildInfoCard(String title, String emoji, List<Widget> children) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Informações da Adoção',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 12),
-          _buildInfoRow('Adotante', _adoption!.adopterName),
-          const SizedBox(height: 8),
-          _buildInfoRow('E-mail', _adoption!.adopterEmail),
-          const SizedBox(height: 8),
-          _buildInfoRow('Telefone', _adoption!.adopterPhone),
-          const SizedBox(height: 8),
-          _buildInfoRow('Data da Adoção', _adoption!.adoptionDate),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              const Text(
-                'Status: ',
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-              ),
-              StatusBadgeWidget(
-                status: _adoption!.status,
-                statusColors: {
-                  AdoptionModel.STATUS_PENDING: const Color(0xFFEAB308),
-                  AdoptionModel.STATUS_APPROVED: const Color(0xFF3B82F6),
-                  AdoptionModel.STATUS_REJECTED: const Color(0xFFEF4444),
-                  AdoptionModel.STATUS_COMPLETED: const Color(0xFF10B981),
-                  AdoptionModel.STATUS_CANCELLED: const Color(0xFF6B7280),
-                },
-              ),
-            ],
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildSponsorshipInfo() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(8),
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Informações do Apadrinhamento',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 12),
-          _buildInfoRow('Padrinho', _sponsorship!.sponsorName),
-          const SizedBox(height: 8),
-          _buildInfoRow('E-mail', _sponsorship!.sponsorEmail),
-          const SizedBox(height: 8),
-          _buildInfoRow('Telefone', _sponsorship!.sponsorPhone),
-          const SizedBox(height: 8),
-          _buildInfoRow('Tipo', _sponsorship!.sponsorshipType),
-          const SizedBox(height: 8),
-          _buildInfoRow(
-            'Valor Mensal',
-            'R\$ ${_sponsorship!.monthlyValue.toStringAsFixed(2)}',
-          ),
-          const SizedBox(height: 8),
-          _buildInfoRow('Data de Início', _sponsorship!.startDate),
-          if (_sponsorship!.endDate != null) ...[
-            const SizedBox(height: 8),
-            _buildInfoRow('Data de Término', _sponsorship!.endDate!),
-          ],
-          const SizedBox(height: 8),
           Row(
             children: [
-              const Text(
-                'Status: ',
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-              ),
-              StatusBadgeWidget(
-                status: _sponsorship!.status,
-                statusColors: {
-                  SponsorshipModel.STATUS_ACTIVE: const Color(0xFF10B981),
-                  SponsorshipModel.STATUS_PENDING: const Color(0xFFEAB308),
-                  SponsorshipModel.STATUS_SUSPENDED: const Color(0xFFEF4444),
-                  SponsorshipModel.STATUS_CANCELLED: const Color(0xFF6B7280),
-                  SponsorshipModel.STATUS_COMPLETED: const Color(0xFF3B82F6),
-                },
+              Text(emoji, style: const TextStyle(fontSize: 24)),
+              const SizedBox(width: 12),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1F2937),
+                ),
               ),
             ],
           ),
+          const SizedBox(height: 16),
+          const Divider(),
+          const SizedBox(height: 16),
+          ...children,
         ],
       ),
     );
   }
 
   Widget _buildInfoRow(String label, String value) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: 150,
-          child: Text(
-            '$label:',
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: AppColors.textSecondary,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 140,
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontSize: 14,
+                color: Color(0xFF6B7280),
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
-        ),
-        Expanded(
-          child: Text(
-            value,
-            style: const TextStyle(fontSize: 14, color: AppColors.textPrimary),
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(fontSize: 14, color: Color(0xFF1F2937)),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatusBadge(String status) {
+    final Map<String, Map<String, dynamic>> statusStyles = {
+      'Disponível': {'color': const Color(0xFF10B981), 'icon': '🏠'},
+      'Adotado': {'color': const Color(0xFF3B82F6), 'icon': '❤️'},
+      'Em tratamento': {'color': const Color(0xFFF59E0B), 'icon': '🏥'},
+    };
+
+    final style =
+        statusStyles[status] ?? {'color': const Color(0xFF6B7280), 'icon': '❓'};
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: (style['color'] as Color).withOpacity(0.1),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(style['icon'] as String, style: const TextStyle(fontSize: 14)),
+          const SizedBox(width: 6),
+          Text(
+            status,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: style['color'] as Color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoChip(String label) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF3F4F6),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        label,
+        style: const TextStyle(fontSize: 14, color: Color(0xFF4B5563)),
+      ),
     );
   }
 

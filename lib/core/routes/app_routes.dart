@@ -55,7 +55,7 @@ class AppRoutes {
             raca: '',
             cor: '',
             status: '',
-          ),
+          ), isEditing: false,
         ),
     sponsorshipForm:
         (context) => SponsorshipFormPage(
@@ -65,7 +65,8 @@ class AppRoutes {
             raca: '',
             cor: '',
             status: '',
-          ),
+            
+          ), isEditing: false,
         ),
     rescues: (context) => const RescuesPage(),
     rescueForm: (context) => RescueFormPage(title: 'Registrar Resgate'),
