@@ -350,7 +350,6 @@ class ComplaintDetailsPage extends StatelessWidget {
                                                                         // Retorna para a tela anterior com o status atualizado
                                                                         Navigator.of(context).pop(
                                                                           ComplaintModel(
-                                                                            
                                                                             descricao: complaint.descricao,
                                                                             endereco: complaint.endereco,
                                                                             dataReporte: complaint.dataReporte,
@@ -386,11 +385,38 @@ class ComplaintDetailsPage extends StatelessWidget {
                                                           ),
                                                         ),
                                                       
+                                                      // Botão de cadastrar resgate (apenas mostrar se estiver em atendimento)
+                                                      if (complaint.status == 'Resolvido')
+                                                        Padding(
+                                                          padding: const EdgeInsets.only(top: 16.0),
+                                                          child: ElevatedButton.icon(
+                                                            onPressed: () {
+                                                              // Navegar para a tela de cadastro de resgate
+                                                              Navigator.of(context).pushNamed(
+                                                                '/resgates/formulario',
+                                                                arguments: complaint,
+                                                              );
+                                                            },
+                                                            icon: const Icon(Icons.pets),
+                                                            label: const Text('Cadastrar Resgate'),
+                                                            style: ElevatedButton.styleFrom(
+                                                              backgroundColor: const Color(0xFF00A3D7),
+                                                              foregroundColor: Colors.white,
+                                                              padding: const EdgeInsets.symmetric(
+                                                                vertical: 16,
+                                                              ),
+                                                              shape: RoundedRectangleBorder(
+                                                                borderRadius: BorderRadius.circular(8),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      
                                                       // Botão de resolver denúncia (apenas mostrar se estiver em atendimento)
                                                       if (complaint.status == 'Em Atendimento')
                                                         Padding(
                                                           padding: const EdgeInsets.only(top: 16.0),
-                                                          child: ElevatedButton.icon(
+                                                          child: OutlinedButton.icon(
                                                             onPressed: () {
                                                               // Mostrar modal de confirmação antes de resolver
                                                               showDialog(
@@ -409,7 +435,6 @@ class ComplaintDetailsPage extends StatelessWidget {
                                                                           // Retorna para a tela anterior com o status atualizado
                                                                           Navigator.of(context).pop(
                                                                             ComplaintModel(
-                                                                              
                                                                               descricao: complaint.descricao,
                                                                               endereco: complaint.endereco,
                                                                               dataReporte: complaint.dataReporte,
@@ -433,9 +458,9 @@ class ComplaintDetailsPage extends StatelessWidget {
                                                             },
                                                             icon: const Icon(Icons.task_alt),
                                                             label: const Text('Resolver Denúncia'),
-                                                            style: ElevatedButton.styleFrom(
-                                                              backgroundColor: const Color(0xFF00A3D7),
-                                                              foregroundColor: Colors.white,
+                                                            style: OutlinedButton.styleFrom(
+                                                              foregroundColor: Colors.green,
+                                                              side: const BorderSide(color: Colors.green),
                                                               padding: const EdgeInsets.symmetric(
                                                                 vertical: 16,
                                                               ),
