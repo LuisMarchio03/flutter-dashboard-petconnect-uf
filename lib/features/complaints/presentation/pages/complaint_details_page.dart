@@ -1,417 +1,593 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../domain/models/complaint_model.dart';
+import '../../../../core/widgets/sidebar_menu.dart';
 
 class ComplaintDetailsPage extends StatelessWidget {
   final ComplaintModel complaint;
 
   const ComplaintDetailsPage({Key? key, required this.complaint})
-    : super(key: key);
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Detalhes da Denúncia'),
-        backgroundColor: const Color(0xFF00A3D7),
-        foregroundColor: Colors.white,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Cabeçalho com status
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: Row(
+        children: [
+          // Menu lateral 
+          const SidebarMenu(selectedItem: 'Denúncias'),
+          
+          // Conteúdo principal
+          Expanded(
+            child: Column(
               children: [
-                const Text(
-                  'Informações da Denúncia',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
+                // Barra superior
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                   decoration: BoxDecoration(
-                    color: _getStatusBackgroundColor(complaint.status),
-                    borderRadius: BorderRadius.circular(4),
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
-                  child: Text(
-                    complaint.status,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: _getStatusTextColor(complaint.status),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 32),
-
-            // Detalhes da denúncia
-            _buildDetailItem(
-              Icons.location_on_outlined,
-              'Endereço',
-              complaint.endereco,
-            ),
-            const SizedBox(height: 16),
-            _buildDetailItem(
-              Icons.calendar_today_outlined,
-              'Data do Reporte',
-              complaint.dataReporte,
-            ),
-            const SizedBox(height: 16),
-            _buildDetailItem(
-              Icons.description_outlined,
-              'Descrição',
-              complaint.descricao,
-              isMultiline: true,
-            ),
-
-            // Exibir imagem se disponível
-            if (complaint.imagemUrl != null &&
-                complaint.imagemUrl!.isNotEmpty) ...[
-              const SizedBox(height: 24),
-              const Text(
-                'Imagem Anexada',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textSecondary,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Container(
-                width: 200,
-                height: 200,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey.shade300),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.network(
-                    complaint.imagemUrl!,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.broken_image,
-                              size: 48,
-                              color: Colors.grey.shade400,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.arrow_back),
+                            onPressed: () => Navigator.pop(context),
+                            tooltip: 'Voltar',
+                          ),
+                          const SizedBox(width: 16),
+                          const Text(
+                            'Detalhes da Denúncia',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textPrimary,
                             ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Não foi possível carregar a imagem',
-                              style: TextStyle(color: Colors.grey.shade600),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: _getStatusBackgroundColor(complaint.status),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          complaint.status,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: _getStatusTextColor(complaint.status),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                
+                // Conteúdo com rolagem
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Breadcrumbs
+                          Row(
+                            children: [
+                              InkWell(
+                                onTap: () => Navigator.pop(context),
+                                child: const Text(
+                                  'Denúncias',
+                                  style: TextStyle(
+                                    color: Color(0xFF00A3D7),
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              const Icon(
+                                Icons.chevron_right,
+                                size: 16,
+                                color: Colors.grey,
+                              ),
+                              const SizedBox(width: 8),
+                              const Text(
+                                'Detalhes',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 24),
+                          
+                          // Layout em grid
+                          LayoutBuilder(
+                            builder: (context, constraints) {
+                              return Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Coluna principal - informações
+                                  Expanded(
+                                    flex: 2,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        // Card com informações principais
+                                        Card(
+                                          elevation: 0,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8),
+                                            side: BorderSide(
+                                              color: Colors.grey.shade200,
+                                            ),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(24.0),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                const Text(
+                                                  'Informações da Denúncia',
+                                                  style: TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: AppColors.textPrimary,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 24),
+                                                _buildDetailItem(
+                                                  Icons.location_on_outlined,
+                                                  'Localização',
+                                                  complaint.endereco,
+                                                ),
+                                                const Divider(height: 24),
+                                                _buildDetailItem(
+                                                  Icons.calendar_today_outlined,
+                                                  'Data do Reporte',
+                                                  complaint.dataReporte,
+                                                ),
+                                                const Divider(height: 24),
+                                                _buildDetailItem(
+                                                  Icons.person_outline,
+                                                  'Responsável',
+                                                  'Não especificado',
+                                                ),
+                                                const Divider(height: 24),
+                                                _buildDetailItem(
+                                                  Icons.phone_outlined,
+                                                  'Contato',
+                                                  'Não especificado',
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        
+                                        const SizedBox(height: 24),
+                                        
+                                        // Seção de observações
+                                        Card(
+                                          elevation: 0,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8),
+                                            side: BorderSide(
+                                              color: Colors.grey.shade200,
+                                            ),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(24.0),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                const Text(
+                                                  'Observações',
+                                                  style: TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: AppColors.textPrimary,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 16),
+                                                Text(
+                                                  complaint.descricao,
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                    color: AppColors.textPrimary,
+                                                    height: 1.5,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  
+                                  const SizedBox(width: 24),
+                                  
+                                  // Coluna lateral - imagem e ações
+                                  if (constraints.maxWidth > 768)
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          // Exibir imagem se disponível
+                                          if (complaint.imagemUrl != null &&
+                                              complaint.imagemUrl!.isNotEmpty)
+                                            Card(
+                                              elevation: 0,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(8),
+                                                side: BorderSide(
+                                                  color: Colors.grey.shade200,
+                                                ),
+                                              ),
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(16.0),
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    const Padding(
+                                                      padding: EdgeInsets.only(bottom: 16.0),
+                                                      child: Text(
+                                                        'Imagem Anexada',
+                                                        style: TextStyle(
+                                                          fontSize: 16,
+                                                          fontWeight: FontWeight.bold,
+                                                          color: AppColors.textPrimary,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    ClipRRect(
+                                                      borderRadius: BorderRadius.circular(8),
+                                                      child: Image.network(
+                                                        complaint.imagemUrl!,
+                                                        fit: BoxFit.cover,
+                                                        errorBuilder: (context, error, stackTrace) {
+                                                          return Center(
+                                                            child: Column(
+                                                              mainAxisAlignment: MainAxisAlignment.center,
+                                                              children: [
+                                                                Icon(
+                                                                  Icons.broken_image,
+                                                                  size: 48,
+                                                                  color: Colors.grey.shade400,
+                                                                ),
+                                                                const SizedBox(height: 8),
+                                                                Text(
+                                                                  'Não foi possível carregar a imagem',
+                                                                  style: TextStyle(color: Colors.grey.shade600),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          );
+                                                        },
+                                                        loadingBuilder: (context, child, loadingProgress) {
+                                                          if (loadingProgress == null) return child;
+                                                          return Center(
+                                                            child: CircularProgressIndicator(
+                                                              value:
+                                                                  loadingProgress.expectedTotalBytes != null
+                                                                      ? loadingProgress.cumulativeBytesLoaded /
+                                                                          loadingProgress.expectedTotalBytes!
+                                                                      : null,
+                                                              color: const Color(0xFF00A3D7),
+                                                            ),
+                                                          );
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          
+                                          const SizedBox(height: 24),
+                                          
+                                          // Card de ações
+                                          Card(
+                                            elevation: 0,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(8),
+                                              side: BorderSide(
+                                                color: Colors.grey.shade200,
+                                              ),
+                                            ),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(24.0),
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  const Text(
+                                                    'Ações',
+                                                    style: TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: AppColors.textPrimary,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 24),
+                                                  
+                                                  // Botões de ação
+                                                  Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                                                    children: [
+                                                      // Botão de atender denúncia (apenas mostrar se estiver pendente)
+                                                      if (complaint.status == 'Pendente')
+                                                        OutlinedButton.icon(
+                                                          onPressed: () {
+                                                            // ... existing code ...
+                                                          },
+                                                          icon: const Icon(Icons.check_circle_outline),
+                                                          label: const Text('Atender Denúncia'),
+                                                          style: OutlinedButton.styleFrom(
+                                                            foregroundColor: const Color(0xFF00A3D7),
+                                                            side: const BorderSide(color: Color(0xFF00A3D7)),
+                                                            padding: const EdgeInsets.symmetric(
+                                                              vertical: 16,
+                                                            ),
+                                                            shape: RoundedRectangleBorder(
+                                                              borderRadius: BorderRadius.circular(8),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      
+                                                      // Botão para marcar como atendido (apenas mostrar se estiver em andamento)
+                                                      if (complaint.status == 'Em andamento') ...[
+                                                        ElevatedButton.icon(
+                                                          onPressed: () {
+                                                            // ... existing code ...
+                                                          },
+                                                          icon: const Icon(Icons.task_alt),
+                                                          label: const Text('Finalizar Atendimento'),
+                                                          style: ElevatedButton.styleFrom(
+                                                            backgroundColor: const Color(0xFF00A3D7),
+                                                            foregroundColor: Colors.white,
+                                                            padding: const EdgeInsets.symmetric(
+                                                              vertical: 16,
+                                                            ),
+                                                            shape: RoundedRectangleBorder(
+                                                              borderRadius: BorderRadius.circular(8),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        const SizedBox(height: 16),
+                                                      ],
+                                                      
+                                                      // Botão para cancelar denúncia (mostrar para pendente e em andamento)
+                                                      if (complaint.status == 'Pendente' ||
+                                                          complaint.status == 'Em andamento')
+                                                        ElevatedButton.icon(
+                                                          onPressed: () {
+                                                            // ... existing code ...
+                                                          },
+                                                          icon: const Icon(Icons.cancel_outlined),
+                                                          label: const Text('Cancelar Denúncia'),
+                                                          style: ElevatedButton.styleFrom(
+                                                            backgroundColor: Colors.red.shade50,
+                                                            foregroundColor: Colors.red,
+                                                            padding: const EdgeInsets.symmetric(
+                                                              vertical: 16,
+                                                            ),
+                                                            shape: RoundedRectangleBorder(
+                                                              borderRadius: BorderRadius.circular(8),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                ],
+                              );
+                            },
+                          ),
+                          
+                          // Exibir imagem e botões em layout mobile
+                          if (MediaQuery.of(context).size.width <= 768) ...[
+                            const SizedBox(height: 24),
+                            
+                            // Exibir imagem se disponível
+                            if (complaint.imagemUrl != null &&
+                                complaint.imagemUrl!.isNotEmpty) ...[
+                              Card(
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  side: BorderSide(
+                                    color: Colors.grey.shade200,
+                                  ),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const Padding(
+                                        padding: EdgeInsets.only(bottom: 16.0),
+                                        child: Text(
+                                          'Imagem Anexada',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppColors.textPrimary,
+                                          ),
+                                        ),
+                                      ),
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: Image.network(
+                                          complaint.imagemUrl!,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (context, error, stackTrace) {
+                                            return Center(
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Icon(
+                                                    Icons.broken_image,
+                                                    size: 48,
+                                                    color: Colors.grey.shade400,
+                                                  ),
+                                                  const SizedBox(height: 8),
+                                                  Text(
+                                                    'Não foi possível carregar a imagem',
+                                                    style: TextStyle(color: Colors.grey.shade600),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                          loadingBuilder: (context, child, loadingProgress) {
+                                            if (loadingProgress == null) return child;
+                                            return Center(
+                                              child: CircularProgressIndicator(
+                                                value:
+                                                    loadingProgress.expectedTotalBytes != null
+                                                        ? loadingProgress.cumulativeBytesLoaded /
+                                                            loadingProgress.expectedTotalBytes!
+                                                        : null,
+                                                color: const Color(0xFF00A3D7),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 24),
+                            ],
+                            
+                            // Card de ações para mobile
+                            Card(
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                side: BorderSide(
+                                  color: Colors.grey.shade200,
+                                ),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(24.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'Ações',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.textPrimary,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 24),
+                                    
+                                    // Botões de ação
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                                      children: [
+                                        // Botão de atender denúncia (apenas mostrar se estiver pendente)
+                                        if (complaint.status == 'Pendente')
+                                          OutlinedButton.icon(
+                                            onPressed: () {
+                                              // ... existing code ...
+                                            },
+                                            icon: const Icon(Icons.check_circle_outline),
+                                            label: const Text('Atender Denúncia'),
+                                            style: OutlinedButton.styleFrom(
+                                              foregroundColor: const Color(0xFF00A3D7),
+                                              side: const BorderSide(color: Color(0xFF00A3D7)),
+                                              padding: const EdgeInsets.symmetric(
+                                                vertical: 16,
+                                              ),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(8),
+                                              ),
+                                            ),
+                                          ),
+                                        
+                                        // Botão para marcar como atendido (apenas mostrar se estiver em andamento)
+                                        if (complaint.status == 'Em andamento') ...[
+                                          ElevatedButton.icon(
+                                            onPressed: () {
+                                              // ... existing code ...
+                                            },
+                                            icon: const Icon(Icons.task_alt),
+                                            label: const Text('Finalizar Atendimento'),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: const Color(0xFF00A3D7),
+                                              foregroundColor: Colors.white,
+                                              padding: const EdgeInsets.symmetric(
+                                                vertical: 16,
+                                              ),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(8),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 16),
+                                        ],
+                                        
+                                        // Botão para cancelar denúncia (mostrar para pendente e em andamento)
+                                        if (complaint.status == 'Pendente' ||
+                                            complaint.status == 'Em andamento')
+                                          ElevatedButton.icon(
+                                            onPressed: () {
+                                              // ... existing code ...
+                                            },
+                                            icon: const Icon(Icons.cancel_outlined),
+                                            label: const Text('Cancelar Denúncia'),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.red.shade50,
+                                              foregroundColor: Colors.red,
+                                              padding: const EdgeInsets.symmetric(
+                                                vertical: 16,
+                                              ),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(8),
+                                              ),
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
                           ],
-                        ),
-                      );
-                    },
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return Center(
-                        child: CircularProgressIndicator(
-                          value:
-                              loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded /
-                                      loadingProgress.expectedTotalBytes!
-                                  : null,
-                          color: const Color(0xFF00A3D7),
-                        ),
-                      );
-                    },
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ],
-
-            const Spacer(),
-
-            // Botões de ação
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                // Botão de atender denúncia (apenas mostrar se estiver pendente)
-                if (complaint.status == 'Pendente') ...[
-                  OutlinedButton(
-                    onPressed: () {
-                      // Mostrar modal de confirmação antes de atender
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('Confirmar Atendimento'),
-                            content: const Text(
-                              'Tem certeza que deseja atender esta denúncia?',
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(
-                                    context,
-                                  ).pop(); // Fecha o diálogo
-                                },
-                                child: const Text('Cancelar'),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(
-                                    context,
-                                  ).pop(); // Fecha o diálogo
-
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        'Status atualizado para "Em andamento"',
-                                      ),
-                                      duration: Duration(seconds: 2),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(8),
-                                        ),
-                                      ),
-                                      backgroundColor: Color.fromARGB(
-                                        255,
-                                        11,
-                                        139,
-                                        88,
-                                      ),
-                                    ),
-                                  );
-
-                                  // Retorna para a tela anterior com o status atualizado
-                                  Navigator.of(context).pop(
-                                    ComplaintModel(
-                                      endereco: complaint.endereco,
-                                      dataReporte: complaint.dataReporte,
-                                      descricao: complaint.descricao,
-                                      status: 'Em andamento',
-                                      imagemUrl: complaint.imagemUrl,
-                                    ),
-                                  );
-                                },
-                                style: TextButton.styleFrom(
-                                  foregroundColor: const Color(0xFF00A3D7),
-                                ),
-                                child: const Text('Confirmar'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Color(0xFF00A3D7),
-                      side: const BorderSide(color: Color(0xFF00A3D7)),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 12,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: const Text('Atender Denúncia'),
-                  ),
-                  const SizedBox(width: 16),
-                ],
-
-                // Botão para marcar como atendido (apenas mostrar se estiver em andamento)
-                if (complaint.status == 'Em andamento') ...[
-                  ElevatedButton(
-                    onPressed: () {
-                      // Mostrar modal de confirmação antes de finalizar
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('Confirmar Finalização'),
-                            content: const Text(
-                              'Tem certeza que deseja marcar esta denúncia como atendida?',
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(
-                                    context,
-                                  ).pop(); // Fecha o diálogo
-                                },
-                                child: const Text('Cancelar'),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(
-                                    context,
-                                  ).pop(); // Fecha o diálogo
-
-                                  // Retorna para a tela anterior com o status atualizado
-                                  Navigator.of(context).pop(
-                                    ComplaintModel(
-                                      endereco: complaint.endereco,
-                                      dataReporte: complaint.dataReporte,
-                                      descricao: complaint.descricao,
-                                      status: 'Atendido',
-                                      imagemUrl: complaint.imagemUrl,
-                                    ),
-                                  );
-
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        'Denúncia finalizada com sucesso!',
-                                      ),
-                                      duration: Duration(seconds: 2),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(8),
-                                        ),
-                                      ),
-                                      backgroundColor: Color.fromARGB(
-                                        255,
-                                        11,
-                                        139,
-                                        88,
-                                      ),
-                                    ),
-                                  );
-
-                                  // Navegar para a tela de criar um resgate após um pequeno delay
-                                  Navigator.of(context).pushNamed(
-                                    '/resgates/formulario',
-                                    arguments: {
-                                      'endereco': complaint.endereco,
-                                      'descricao': complaint.descricao,
-                                      'imagemUrl': complaint.imagemUrl,
-                                      'origemDenuncia': true,
-                                    },
-                                  );
-                                },
-                                style: TextButton.styleFrom(
-                                  foregroundColor: const Color(0xFF00A3D7),
-                                ),
-                                child: const Text('Confirmar'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF00A3D7),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 12,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: const Text('Finalizar Atendimento'),
-                  ),
-                  const SizedBox(width: 16),
-                ],
-
-                // Botão para cancelar denúncia (mostrar para pendente e em andamento)
-                if (complaint.status == 'Pendente' ||
-                    complaint.status == 'Em andamento') ...[
-                  ElevatedButton(
-                    onPressed: () {
-                      // Mostrar modal de confirmação antes de cancelar
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('Confirmar Cancelamento'),
-                            content: const Text(
-                              'Tem certeza que deseja cancelar esta denúncia?',
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(
-                                    context,
-                                  ).pop(); // Fecha o diálogo
-                                },
-                                child: const Text('Voltar'),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(
-                                    context,
-                                  ).pop(); // Fecha o diálogo
-
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        'Denúncia cancelada com sucesso!',
-                                      ),
-                                      duration: Duration(seconds: 2),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(8),
-                                        ),
-                                      ),
-                                      backgroundColor: Color.fromARGB(
-                                        255,
-                                        11,
-                                        139,
-                                        88,
-                                      ),
-                                    ),
-                                  );
-
-                                  // Retorna para a tela anterior com o status atualizado
-                                  Navigator.of(context).pop(
-                                    ComplaintModel(
-                                      endereco: complaint.endereco,
-                                      dataReporte: complaint.dataReporte,
-                                      descricao: complaint.descricao,
-                                      status: 'Cancelado',
-                                      imagemUrl: complaint.imagemUrl,
-                                    ),
-                                  );
-                                },
-                                style: TextButton.styleFrom(
-                                  foregroundColor: Colors.red,
-                                ),
-                                child: const Text('Cancelar Denúncia'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 12,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: const Text('Cancelar Denúncia'),
-                  ),
-                ],
               ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -422,36 +598,33 @@ class ComplaintDetailsPage extends StatelessWidget {
     String value, {
     bool isMultiline = false,
   }) {
-    return Column(
+    return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            color: AppColors.textSecondary,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Row(
-          crossAxisAlignment:
-              isMultiline
-                  ? CrossAxisAlignment.start
-                  : CrossAxisAlignment.center,
-          children: [
-            Icon(icon, color: AppColors.textSecondary, size: 20),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
+        Icon(icon, color: AppColors.textSecondary, size: 20),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
                 value,
                 style: const TextStyle(
                   fontSize: 16,
                   color: AppColors.textPrimary,
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );
