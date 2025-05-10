@@ -23,24 +23,24 @@ class SidebarMenu extends StatelessWidget {
             children: [
               Image.asset(
                 'assets/logo.png',
-                width: 60,
-                height: 60,
+                width: 140,
+                height: 140,
               ),
-              const Text(
-                'PetConnect',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const Text(
-                'Conectando Vidas',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                ),
-              ),
+              // const Text(
+              //   'PetConnect',
+              //   style: TextStyle(
+              //     color: Colors.white,
+              //     fontSize: 18,
+              //     fontWeight: FontWeight.bold,
+              //   ),
+              // ),
+              // const Text(
+              //   'Conectando Vidas',
+              //   style: TextStyle(
+              //     color: Colors.white,
+              //     fontSize: 12,
+              //   ),
+              // ),
             ],
           ),
           const SizedBox(height: 40),

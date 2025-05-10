@@ -20,7 +20,7 @@ class StatsCardWidget extends StatelessWidget {
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           gradient: LinearGradient(
@@ -30,29 +30,32 @@ class StatsCardWidget extends StatelessWidget {
           ),
         ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Text(emoji, style: const TextStyle(fontSize: 24)),
+                Text(emoji, style: const TextStyle(fontSize: 18)),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     title,
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 13,
                       color: color.withOpacity(0.8),
                       fontWeight: FontWeight.w500,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
             Text(
               value,
               style: TextStyle(
-                fontSize: 24,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: color,
               ),
